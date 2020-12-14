@@ -23,9 +23,11 @@ from selenium.common.exceptions import WebDriverException, NoSuchElementExceptio
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 
-# ------ initialisation des constantes ------
+# ------ affectation de la valeur et de la date du premier point haut local ------
 MY_LAST_HIGH = 5555.83
 MY_LAST_DATE = "23/11/2020"
+
+# ------ déclaration des url des xpath des données à scraper ------
 cac_url = 'https://www.boursorama.com/bourse/indices/cours/1rPCAC/'
 cac_x_path = '//*[@id="main-content"]/div/section[1]/div[2]/article/div[1]/div[2]/div[1]/div[5]/' \
              'div[2]/div[1]/div/div/table/tbody/tr[{}]/td[{}]'
@@ -39,7 +41,7 @@ loop_url = 'https://fr.investing.com/indices/france-40-historical-data'
 loop_x_path = '//*[@id="curr_table"]/tbody/tr[{}]/td[{}]'
 
 
-# ------ fonctions ------
+# ------ quelques fonctions statiques ------
 def get_datas(my_file, data):
     """ fonction qui récupère les données d'un fichier s'il existe et qui le crée sinon """
     try:
@@ -76,7 +78,7 @@ def reformate_data(data):
     return float(data.replace(".", "").replace(",", "."))
 
 
-# ------ configuration du webdriver ------
+# ------ configuration de la classe WebDriver ------
 class WebDriver:
     """ classe qui configure le webDriver pour récupérer des données par leur xpath """
     def __init__(self, url, x_path, index1, index2, loop=None):
@@ -172,7 +174,7 @@ pre_web_higher = get_higher(PX_datas)
 saved_high = ()
 saved_high = get_datas("saved_high", saved_high)
 
-# ------ si le fichier est vide, on garde les valeurs par défaut comme références, sinon celles chargées ------
+# ------ si le fichier est vide, on garde les valeurs de références, sinon on les actualise ------
 if len(saved_high) > 0:
     MY_LAST_HIGH = saved_high[0]
     MY_LAST_DATE = saved_high[1]
