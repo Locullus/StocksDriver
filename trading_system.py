@@ -241,7 +241,6 @@ else:
 saved_high = (MY_LAST_HIGH, MY_LAST_DATE)
 save_datas("saved_high", saved_high)
 
-# la date et la valeur du plus haut local doivent être chargées
 # il faut calculer le prix du LVC sur les niveaux d'achat et de vente
 # il faut écrire la fonction de corrélation entre les cours du CAC et du LVC
 
