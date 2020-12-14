@@ -243,7 +243,21 @@ else:
 saved_high = (MY_LAST_HIGH, MY_LAST_DATE)
 save_datas("saved_high", saved_high)
 
-# il faut calculer le prix du LVC sur les niveaux d'achat et de vente
-# il faut écrire la fonction de corrélation entre les cours du CAC et du LVC
+# ------ nombre de positions engagées ------
+positions = 0
+
+# ------ détermination du premier niveau d'achat ------
+achat_1 = MY_LAST_HIGH - 300
+print("Le premier niveau d'achat se situe à " + str(achat_1))
+
+"""ici il faut calculer la valeur du lvc relativement au cac actuel et au cac -300pts.
+Une fonction qui calcule automatiquement le prix du lvc par rapport au cac doit être développée."""
+
+# ------ lancement d'un ordre d'achat ------
+if PX_datas[3] < achat_1:
+    print("Un niveau d'achat a été touché. A vérifier sur le site de BourseDirect.")
+
+"""il faut créer une fonction qui vérifie si, entre la date du jour et la dernière date chargée, le plus bas < achat1
+cette fonction pourra prendre des arguments afin de servir à plusieurs vérifications de cet ordre"""
 
 quit()
