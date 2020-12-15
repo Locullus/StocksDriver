@@ -258,6 +258,24 @@ if PX_datas[3] < achat_1:
     print("Un niveau d'achat a été touché. A vérifier sur le site de BourseDirect.")
 
 """il faut créer une fonction qui vérifie si, entre la date du jour et la dernière date chargée, le plus bas < achat1
-cette fonction pourra prendre des arguments afin de servir à plusieurs vérifications de cet ordre"""
+cette fonction pourra prendre des arguments afin de servir à plusieurs vérifications de cet ordre
+
+L'algorithme est le suivant :
+- si position = 0:
+        alors achat à last_high-5%
+- si position > 0:
+        alors achat à A(n-1)-2%
+- si position = 0 et vente sur objectif:
+        alors achat à vente-5%
+- si position = 0 et nouveau plus haut:
+        alors supprimer ordre non passé;
+        achat à last-high-5%
+        
+L'idée est de traquer l'indice de référence pour se placer à l'achat dès qu'il perd 5%.
+L'objectif de revente est à +5%.
+Quand une ligne est prise, les ordres suivants si situent 2% plus bas.
+Jusqu'à ce qu'il ne reste qu'une seule position, toutes les positions vendues seront reprises à -5%.
+Quand toutes les lignes sont vendues, on recommence en traquant un nouveau plus haut sur l'indice pour acheter à -5%.
+        """
 
 quit()
