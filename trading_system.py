@@ -267,31 +267,57 @@ finally:
 saved_high = (MY_LAST_HIGH, MY_LAST_DATE)
 save_datas("saved_high", saved_high)
 
-# ------ détermination du premier niveau d'achat ------
-achat_1 = MY_LAST_HIGH - (MY_LAST_HIGH * 0.05)
+# ------ détermination du premier niveau d'achat arrondi ------
+if high_cac > MY_LAST_HIGH:
+    delta = abs(((MY_LAST_HIGH * 100) / high_cac) - 100) * 2
+    lvc = high_lvc - ((high_lvc * delta) / 100)
+else:
+    delta = abs(((high_cac * 100) / MY_LAST_HIGH) - 100) * 2
+    lvc = abs(high_lvc + ((high_lvc * delta) / 100))
+
+PX_A1 = round(MY_LAST_HIGH - (MY_LAST_HIGH * 0.05), 2)
+A1 = round(lvc - ((lvc * 0.05) * 2), 2)
+"""mettre tous ces calculs dans une fonction qui prendra en paramètres la cible(target) et le levier(leverage)"""
+
 print()
-print("Le premier niveau d'achat se situe à " + str(achat_1))
+print("Le premier niveau d'achat se situe à " + str(PX_A1) + " points soit à " + str(A1) + " sur le lvc.")
 
 """ici il faut calculer la valeur du lvc relativement au cac actuel et au cac -5%.
-Une fonction qui calcule automatiquement le prix du lvc par rapport au cac doit être développée."""
+Une fonction qui calcule automatiquement le prix du lvc par rapport au cac doit être développée.
+
+pre_web_higher, post_web_higher et même fonction get_higher() sont peut-être inutiles.
+Je n'ai pas besoin de connaître les plus hauts historiques en remontant trop loin, ce qu'il me faut c'est déterminer
+le dernier plus haut depuis la dernière revente. Donc quand POSITIONS = 0, traquer le NEW_HIGH et acheter à -5%.
+Les lignes concernées sont 64-75, 174-180 et 215-221."""
+
 
 """il faut créer une fonction qui vérifie si, entre la date du jour et la dernière date chargée, le plus bas < achat1
 cette fonction pourra prendre des arguments afin de servir à plusieurs vérifications de cet ordre
 
 L'algorithme est le suivant :
-- si position = 0:
-        alors achat à last_high-5%
-- si position > 0:
-        alors achat à A(n-1)-2%
-- si position = 0 et vente sur objectif:
-        alors achat à vente-5%
-- si position = 0 et nouveau plus haut:
-        alors supprimer ordre non passé;
-        achat à last-high-5%
+
+A L'ACHAT :
+1-  IF POSITION = 0:
+        +A1 à LAST_HIGH-5%
+        +A2 à A1-2%
+        +A3 à A2-2%
+2-   IF POSITION = 0 AND NEW_HIGH:
+        ANNULATION A1 A2 A3
+        +A1 à NEW_HIGH-5%
+        +A2 à A1-2%
+        +A3 à A2-2%
+3-  IF POSITION > 0:
+        +A à (A-1)-2%
+        DONC SI A7 => ACHAT à A6-2%
+APRES LA VENTE :
+3-   IF POSITION > 0:
+        +A à -5%
+4-   IF POSITION = 0:
+        RETOUR à 1
         
 L'idée est de traquer l'indice de référence pour se placer à l'achat dès qu'il perd 5%.
 L'objectif de revente est à +5%.
-Quand une ligne est prise, les ordres suivants si situent 2% plus bas.
+Quand une ligne est prise, les ordres suivants se situent 2% plus bas.
 Jusqu'à ce qu'il ne reste qu'une seule position, toutes les positions vendues seront reprises à -5%.
 Quand toutes les lignes sont vendues, on recommence en traquant un nouveau plus haut sur l'indice pour acheter à -5%.
         """
