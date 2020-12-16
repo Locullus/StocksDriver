@@ -173,8 +173,11 @@ PX_datas = get_datas("PX-datas", PX_datas)
 try:
     if len(PX_datas) > 0:
         print("Voici le fichier sauvegardé : " + str(PX_datas))
+        print("La liste contient : " + str(len(PX_datas)) + " éléments.")
+    else:
+        print("Aucune donnée sauvegardée. Le fichier est vide.")
 except TypeError:
-    print("La liste contient : " + str(len(PX_datas)) + " éléments.")
+    print("Exception levée. Le fichier est vide, aucune donnée sauvegardée.")
 
 # ------ récupération de la valeur et de la date du dernier plus haut dans le fichier enrégistré ------
 pre_web_higher = get_higher(PX_datas)
@@ -207,8 +210,10 @@ positions_list = get_datas("positions_list", positions_list)
 try:
     if len(positions_list) > 0:
         print("Voici vos positions :" + str(positions_list))
+    else:
+        print("Vous n'avez pas de positions.")
 except TypeError:
-    print("Vous n'avez pas de positions.")
+    print("Le fichier est vide. Aucune position n'a encore été prise.")
 
 # ------ mise à jour des dernières données du cac disponibles sur Investing ------
 print()
@@ -280,20 +285,14 @@ else:
     delta = abs(((high_cac * 100) / MY_LAST_HIGH) - 100) * 2
     lvc = abs(high_lvc + ((high_lvc * delta) / 100))
 
-# ------ détermination du premier niveau d'achat arrondi ------
-# PX_A1 = round(MY_LAST_HIGH - ((MY_LAST_HIGH * 5) / 100 * 1), 2)
+# ------ détermination du premier niveau d'achat arrondi sur le LVC ------
 PX_A1 = buy_limit(MY_LAST_HIGH, 5, 1)
 A1 = buy_limit(lvc, 5, 2)
-# A1 = round(lvc - (((lvc * 5) / 100) * 2), 2)
-"""mettre tous ces calculs dans une fonction qui prendra en paramètres la cible(target) et le levier(leverage)
-"""
 
 print()
-print("Le premier niveau d'achat se situe à " + str(PX_A1) + " points soit à " + str(A1) + " sur le lvc.")
+print("Le premier niveau d'achat se situe à " + str(PX_A1) + " points, ce qui équivaut à " + str(A1) + " sur le lvc.")
 
-"""ici il faut calculer la valeur du lvc relativement au cac actuel et au cac -5%.
-Une fonction qui calcule automatiquement le prix du lvc par rapport au cac doit être développée.
-
+"""
 pre_web_higher, post_web_higher et même fonction get_higher() sont peut-être inutiles.
 Je n'ai pas besoin de connaître les plus hauts historiques en remontant trop loin, ce qu'il me faut c'est déterminer
 le dernier plus haut depuis la dernière revente. Donc quand POSITIONS = 0, traquer le NEW_HIGH et acheter à -5%.
