@@ -105,7 +105,6 @@ class WebDriver:
                     self.datas = self.parse_array(self.x_path, self.index1, self.index2)
                 except WebDriverException:
                     print("Problème avec le WebDriver, vérifiez la connnexion.")
-            self.driver.quit()
 
     def parsing_method(self):
         """ fonction qui détermine le nombre de lignes à scraper et la boucle utilisée """
@@ -227,17 +226,18 @@ print()
 print("Le dernier plus haut local valait " + str(MY_LAST_HIGH) + " points à la date du " + MY_LAST_DATE)
 
 # ------ on crée une boucle qui vérifie si un nouveau plus haut relatif a été réalisé ------
+"""il faut ajouter une condition de date pour la recherche du nouveau plus haut local"""
 new_high = []
 for item in PX_datas:
-    item[3] = float(item[3])
-    if float(item[3]) > MY_LAST_HIGH:
-        new_high.append(item[3])
-        MY_LAST_HIGH = item[3]
+    my_item = float(item[3])
+    if my_item > MY_LAST_HIGH:
+        new_high.append(my_item)
+        MY_LAST_HIGH = my_item
         MY_LAST_DATE = item[0]
 if len(new_high) > 0:
     print("MY_LAST_HIGH vaut maintenant : " + str(MY_LAST_HIGH) + " à la date du : " + str(MY_LAST_DATE))
 else:
-    print("Pas de nouveau plus haut local effectué, MY_LAST_HIGH vaut toujours " + str(MY_LAST_HIGH) + ".")
+    print("Pas de nouveau plus haut local effectué, MY_LAST_HIGH vaut toujours " + str(MY_LAST_HIGH))
 
 # ------ sauvegarde de la valeur du dernier plus haut local ------
 saved_high = (MY_LAST_HIGH, MY_LAST_DATE)
@@ -247,15 +247,28 @@ save_datas("saved_high", saved_high)
 positions = 0
 
 # ------ détermination du premier niveau d'achat ------
-achat_1 = MY_LAST_HIGH - 300
+achat_1 = MY_LAST_HIGH - (MY_LAST_HIGH * 0.05)
 print("Le premier niveau d'achat se situe à " + str(achat_1))
 
-"""ici il faut calculer la valeur du lvc relativement au cac actuel et au cac -300pts.
+"""ici il faut calculer la valeur du lvc relativement au cac actuel et au cac -5%.
 Une fonction qui calcule automatiquement le prix du lvc par rapport au cac doit être développée."""
 
 # ------ lancement d'un ordre d'achat ------
-if PX_datas[3] < achat_1:
-    print("Un niveau d'achat a été touché. A vérifier sur le site de BourseDirect.")
+new_low = []
+low_result = ""
+k = 0
+for item in PX_datas:
+    my_item = float(item[4])
+    while str(item[0]) != MY_LAST_DATE and k < len(PX_datas):
+        print(str(item[0]))
+        if my_item < achat_1:
+            new_low.append(my_item)
+            low_result = "Un niveau d'achat a été touché. A vérifier sur le site de BourseDirect."
+        else:
+            low_result = "Pas de niveau d'achat touché."
+        k += 1
+print(low_result)
+print("la liste new_low : " + str(new_low))
 
 """il faut créer une fonction qui vérifie si, entre la date du jour et la dernière date chargée, le plus bas < achat1
 cette fonction pourra prendre des arguments afin de servir à plusieurs vérifications de cet ordre
