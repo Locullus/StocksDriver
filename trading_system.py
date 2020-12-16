@@ -78,6 +78,11 @@ def reformate_data(data):
     return float(data.replace(".", "").replace(",", "."))
 
 
+def buy_limit(value, target, leverage):
+    """fonction qui calcule un objectif cible en pourcentage ajusté d'un levier"""
+    return round(value - (((value * target) / 100) * leverage), 2)
+
+
 # ------ configuration de la classe WebDriver ------
 class WebDriver:
     """ classe qui configure le webDriver pour récupérer des données par leur xpath """
@@ -267,7 +272,7 @@ finally:
 saved_high = (MY_LAST_HIGH, MY_LAST_DATE)
 save_datas("saved_high", saved_high)
 
-# ------ détermination du premier niveau d'achat arrondi ------
+# ------ prise en compte du leverage x2 : calcul du delta ------
 if high_cac > MY_LAST_HIGH:
     delta = abs(((MY_LAST_HIGH * 100) / high_cac) - 100) * 2
     lvc = high_lvc - ((high_lvc * delta) / 100)
@@ -275,9 +280,13 @@ else:
     delta = abs(((high_cac * 100) / MY_LAST_HIGH) - 100) * 2
     lvc = abs(high_lvc + ((high_lvc * delta) / 100))
 
-PX_A1 = round(MY_LAST_HIGH - (MY_LAST_HIGH * 0.05), 2)
-A1 = round(lvc - ((lvc * 0.05) * 2), 2)
-"""mettre tous ces calculs dans une fonction qui prendra en paramètres la cible(target) et le levier(leverage)"""
+# ------ détermination du premier niveau d'achat arrondi ------
+# PX_A1 = round(MY_LAST_HIGH - ((MY_LAST_HIGH * 5) / 100 * 1), 2)
+PX_A1 = buy_limit(MY_LAST_HIGH, 5, 1)
+A1 = buy_limit(lvc, 5, 2)
+# A1 = round(lvc - (((lvc * 5) / 100) * 2), 2)
+"""mettre tous ces calculs dans une fonction qui prendra en paramètres la cible(target) et le levier(leverage)
+"""
 
 print()
 print("Le premier niveau d'achat se situe à " + str(PX_A1) + " points soit à " + str(A1) + " sur le lvc.")
