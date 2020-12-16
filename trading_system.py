@@ -70,7 +70,7 @@ def get_higher(data):
         try:
             return pre_web_higher
         except NameError:
-            return "Il n'y a pas de plus haut dans la liste historique parce qu'elle est vide !"
+            return "Pas de plus haut trouvé : la liste est peut-être vide !"
 
 
 def reformate_data(data):
@@ -165,45 +165,61 @@ class WebDriver:
 # ------ chargement du fichier des données historiques ------
 PX_datas = []
 PX_datas = get_datas("PX-datas", PX_datas)
-print("Voici le fichier sauvegardé : " + str(PX_datas))
-print("La liste contient : " + str(len(PX_datas)) + " éléments.")
+try:
+    if len(PX_datas) > 0:
+        print("Voici le fichier sauvegardé : " + str(PX_datas))
+except TypeError:
+    print("La liste contient : " + str(len(PX_datas)) + " éléments.")
+
+# ------ récupération de la valeur et de la date du dernier plus haut dans le fichier enrégistré ------
 pre_web_higher = get_higher(PX_datas)
-
-# ------ chargement du fichier du dernier plus haut local, s'il n'existe pas on le crée ------
-saved_high = ()
-saved_high = get_datas("saved_high", saved_high)
-
-# ------ si le fichier est vide, on garde les valeurs de références, sinon on les actualise ------
-if len(saved_high) > 0:
-    MY_LAST_HIGH = saved_high[0]
-    MY_LAST_DATE = saved_high[1]
-else:
-    MY_LAST_HIGH = MY_LAST_HIGH
-    MY_LAST_DATE = MY_LAST_DATE
-print("Le plus haut enregistré dans le fichier 'saved_high' vaut " + str(MY_LAST_HIGH) +
-      " à la date du " + str(MY_LAST_DATE))
-
-# ------ récupération de la date la plus récente dans le fichier enrégistré ------
 if len(PX_datas) > 0:
     last_saved_date = PX_datas[0][0]
 else:
     last_saved_date = "0"
 
 print("Le dernier plus haut enregistré vaut " + str(pre_web_higher) + " points, à la date du  " + str(last_saved_date))
+
+# ------ chargement du fichier du dernier plus haut local, s'il n'existe pas on le crée ------
+saved_high = ()
+saved_high = get_datas("saved_high", saved_high)
+
+# ------ si le fichier est vide, on garde les valeurs de références, sinon on les actualise ------
+try:
+    if len(saved_high) > 0:
+        MY_LAST_HIGH = saved_high[0]
+        MY_LAST_DATE = saved_high[1]
+        print("Le plus haut enregistré dans le fichier 'saved_high' vaut " + str(MY_LAST_HIGH) +
+              " à la date du " + str(MY_LAST_DATE))
+except TypeError:
+    print("Le fichier est vide. Aucun plus haut trouvé.")
+
+# ------ chargement du fichier de sauvegarde des positions ------
+positions_list = []
+positions_list = get_datas("positions_list", positions_list)
+
+# ------ nombre de positions engagées que l'on récupère dans le fichier ------
+try:
+    if len(positions_list) > 0:
+        print("Voici vos positions :" + str(positions_list))
+except TypeError:
+    print("Vous n'avez pas de positions.")
+
+# ------ mise à jour des dernières données du cac disponibles sur Investing ------
 print()
 print("Chargement du webDriver pour récupérer les dernières données...")
-
-# ------ récupération du plus haut local depuis le dernier chargement ------
 investing = WebDriver(loop_url, loop_x_path, 1, 1, "loop")
-investing_result = investing.datas
-print("Les données scrapées sur le site d'Investing : " + str(investing_result))
-post_web_higher = get_higher(investing_result)
+investing_datas = investing.datas
+print("Les données scrapées sur le site d'Investing : " + str(investing_datas))
+
+# ------ on vérifie si un nouveau plus haut a été réalisé ------
+post_web_higher = get_higher(investing_datas)
 if post_web_higher > pre_web_higher:
     print("Un nouveau plus haut a été effectué depuis le dernier chargement : " + str(post_web_higher))
 else:
     print("Aucun nouveau plus haut depuis le dernier chargement.")
 
-# ------ récupération des plus hauts locaux ------
+# ------ récupération de la dernière valeur disponible du cac et du lvc sur Boursorama ------
 print()
 print("Instanciation de la classe WebDriver pour récupérer les données sur le site de Boursorama...")
 cac_high = WebDriver(cac_url, cac_x_path, 4, 6)
@@ -212,9 +228,9 @@ lvc_high = WebDriver(lvc_url, lvc_x_path, 4, 6)
 high_lvc = float(lvc_high.datas)
 print("Les dernières valeurs disponibles du cac : " + str(high_cac) + " et du lvc : " + str(high_lvc))
 
-# ------ fusion et sauvegarde de la liste historique (PX_datas) actualisée avec la liste scrapée (new_datas) ------
+# ------ fusion et sauvegarde de la liste historique (PX_datas) actualisée et de la liste scrapée (new_datas) ------
 index = 0
-for each_element in investing_result:
+for each_element in investing_datas:
     PX_datas.insert(index, each_element)
     index += 1
 save_datas("PX-datas", PX_datas)
@@ -239,36 +255,17 @@ if len(new_high) > 0:
 else:
     print("Pas de nouveau plus haut local effectué, MY_LAST_HIGH vaut toujours " + str(MY_LAST_HIGH))
 
-# ------ sauvegarde de la valeur du dernier plus haut local ------
+# ------ sauvegarde de la valeur et de la date du dernier plus haut local ------
 saved_high = (MY_LAST_HIGH, MY_LAST_DATE)
 save_datas("saved_high", saved_high)
 
-# ------ nombre de positions engagées ------
-positions = 0
-
 # ------ détermination du premier niveau d'achat ------
 achat_1 = MY_LAST_HIGH - (MY_LAST_HIGH * 0.05)
+print()
 print("Le premier niveau d'achat se situe à " + str(achat_1))
 
 """ici il faut calculer la valeur du lvc relativement au cac actuel et au cac -5%.
 Une fonction qui calcule automatiquement le prix du lvc par rapport au cac doit être développée."""
-
-# ------ lancement d'un ordre d'achat ------
-new_low = []
-low_result = ""
-k = 0
-for item in PX_datas:
-    my_item = float(item[4])
-    while str(item[0]) != MY_LAST_DATE and k < len(PX_datas):
-        print(str(item[0]))
-        if my_item < achat_1:
-            new_low.append(my_item)
-            low_result = "Un niveau d'achat a été touché. A vérifier sur le site de BourseDirect."
-        else:
-            low_result = "Pas de niveau d'achat touché."
-        k += 1
-print(low_result)
-print("la liste new_low : " + str(new_low))
 
 """il faut créer une fonction qui vérifie si, entre la date du jour et la dernière date chargée, le plus bas < achat1
 cette fonction pourra prendre des arguments afin de servir à plusieurs vérifications de cet ordre
