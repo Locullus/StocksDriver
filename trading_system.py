@@ -141,7 +141,6 @@ class WebDriver:
             lower = reformate_data(raw_lower)
             my_list.append([last_date, last, opening, higher, lower])
             last_date = self.parse_array(self.x_path, i + 1, 1)
-            print("la valeur incrémentée en fin de boucle est celle du " + last_date)
             i += 1
         return my_list
 
@@ -216,8 +215,7 @@ except TypeError:
     print("Le fichier est vide. Aucune position n'a encore été prise.")
 
 # ------ mise à jour des dernières données du cac disponibles sur Investing ------
-print()
-print("Chargement du webDriver pour récupérer les dernières données...")
+print("\nChargement du webDriver pour récupérer les dernières données...")
 investing = WebDriver(loop_url, loop_x_path, 1, 1, "loop")
 investing_datas = investing.datas
 print("Les données scrapées sur le site d'Investing : " + str(investing_datas))
@@ -244,8 +242,7 @@ for each_element in investing_datas:
     PX_datas.insert(index, each_element)
     index += 1
 save_datas("PX-datas", PX_datas)
-print()
-print("Fusion des listes réalisées : la sauvegarde a été actualisée.")
+print("\nFusion des listes réalisées : la sauvegarde a été actualisée.")
 print("La liste contient désormais " + str(len(PX_datas)) + " éléments.")
 print("FIN DU SCRAPING !!!")
 print()
@@ -293,6 +290,9 @@ print()
 print("Le premier niveau d'achat se situe à " + str(PX_A1) + " points, ce qui équivaut à " + str(A1) + " sur le lvc.")
 
 """
+
+creuser les assertions en python (assert) qui semblent proches de try except pour lever des erreurs.
+
 pre_web_higher, post_web_higher et même fonction get_higher() sont peut-être inutiles.
 Je n'ai pas besoin de connaître les plus hauts historiques en remontant trop loin, ce qu'il me faut c'est déterminer
 le dernier plus haut depuis la dernière revente. Donc quand POSITIONS = 0, traquer le NEW_HIGH et acheter à -5%.
