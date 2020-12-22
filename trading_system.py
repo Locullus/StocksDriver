@@ -131,17 +131,16 @@ class WebDriver:
         last_date = self.parse_array(self.x_path, i, 1)
         while last_date != last_saved_date and i < 22:
             last_date = self.parse_array(self.x_path, i, 1)
-            raw_lasts = self.parse_array(self.x_path, i, 2)
-            last = reformate_data(raw_lasts)
-            raw_opening = self.parse_array(self.x_path, i, 3)
-            opening = reformate_data(raw_opening)
-            raw_higher = self.parse_array(self.x_path, i, 4)
-            higher = reformate_data(raw_higher)
-            raw_lower = self.parse_array(self.x_path, i, 5)
-            lower = reformate_data(raw_lower)
+            last = self.parse_array(self.x_path, i, 2)
+            last = reformate_data(last)
+            opening = self.parse_array(self.x_path, i, 3)
+            opening = reformate_data(opening)
+            higher = self.parse_array(self.x_path, i, 4)
+            higher = reformate_data(higher)
+            lower = self.parse_array(self.x_path, i, 5)
+            lower = reformate_data(lower)
             my_list.append([last_date, last, opening, higher, lower])
             last_date = self.parse_array(self.x_path, i + 1, 1)
-            print("la valeur incrémentée en fin de boucle est celle du " + last_date)
             i += 1
         return my_list
 
@@ -150,14 +149,14 @@ class WebDriver:
         my_list = []
         for i in range(nb, 22):
             last_date = self.parse_array(self.x_path, i, 1)
-            raw_lasts = self.parse_array(self.x_path, i, 2)
-            last = reformate_data(raw_lasts)
-            raw_opening = self.parse_array(self.x_path, i, 3)
-            opening = reformate_data(raw_opening)
-            raw_higher = self.parse_array(self.x_path, i, 4)
-            higher = reformate_data(raw_higher)
-            raw_lower = self.parse_array(self.x_path, i, 5)
-            lower = reformate_data(raw_lower)
+            last = self.parse_array(self.x_path, i, 2)
+            last = reformate_data(last)
+            opening = self.parse_array(self.x_path, i, 3)
+            opening = reformate_data(opening)
+            higher = self.parse_array(self.x_path, i, 4)
+            higher = reformate_data(higher)
+            lower = self.parse_array(self.x_path, i, 5)
+            lower = reformate_data(lower)
             my_list.append([last_date, last, opening, higher, lower])
         print("La boucle for a retouné : " + str(len(my_list)))
         return my_list
