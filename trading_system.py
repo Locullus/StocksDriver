@@ -228,8 +228,7 @@ else:
     print("Aucun nouveau plus haut depuis le dernier chargement.")
 
 # ------ récupération de la dernière valeur disponible du cac et du lvc sur Boursorama ------
-print()
-print("Instanciation de la classe WebDriver pour récupérer les données sur le site de Boursorama...")
+print("\nInstanciation de la classe WebDriver pour récupérer les données sur le site de Boursorama...")
 cac_high = WebDriver(cac_url, cac_x_path, 4, 6)
 high_cac = float(cac_high.datas.replace(" ", ""))
 lvc_high = WebDriver(lvc_url, lvc_x_path, 4, 6)
@@ -245,8 +244,7 @@ save_datas("PX-datas", PX_datas)
 print("\nFusion des listes réalisées : la sauvegarde a été actualisée.")
 print("La liste contient désormais " + str(len(PX_datas)) + " éléments.")
 print("FIN DU SCRAPING !!!")
-print()
-print("Le dernier plus haut local valait " + str(MY_LAST_HIGH) + " points à la date du " + MY_LAST_DATE)
+print("\nLe dernier plus haut local valait " + str(MY_LAST_HIGH) + " points à la date du " + MY_LAST_DATE)
 
 # ------ on crée une boucle qui vérifie si un nouveau plus haut relatif a été réalisé ------
 msg = ""
@@ -285,9 +283,7 @@ else:
 # ------ détermination du premier niveau d'achat arrondi sur le LVC, avec objectif +5% et levier x2 ------
 PX_A1 = buy_limit(MY_LAST_HIGH, 5, 1)
 A1 = buy_limit(lvc, 5, 2)
-
-print()
-print("Le premier niveau d'achat se situe à " + str(PX_A1) + " points, ce qui équivaut à " + str(A1) + " sur le lvc.")
+print("\nLe premier niveau d'achat se situe à " + str(PX_A1) + " points, ce qui équivaut à " + str(A1) + " sur le lvc.")
 
 """
 
