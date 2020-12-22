@@ -282,7 +282,7 @@ else:
     delta = abs(((high_cac * 100) / MY_LAST_HIGH) - 100) * 2
     lvc = abs(high_lvc + ((high_lvc * delta) / 100))
 
-# ------ détermination du premier niveau d'achat arrondi sur le LVC ------
+# ------ détermination du premier niveau d'achat arrondi sur le LVC, avec objectif +5% et levier x2 ------
 PX_A1 = buy_limit(MY_LAST_HIGH, 5, 1)
 A1 = buy_limit(lvc, 5, 2)
 
