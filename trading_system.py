@@ -264,7 +264,7 @@ try:
             else:
                 break
 except TypeError:
-    print("Le fichier est vide...")
+    msg = "Le fichier est vide..."
 finally:
     print(msg)
 
