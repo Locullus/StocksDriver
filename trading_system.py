@@ -231,13 +231,15 @@ else:
 print("\nInstanciation de la classe WebDriver pour récupérer les données sur le site de Boursorama...")
 cac_high = WebDriver(cac_url, cac_x_path, 4, 6)
 high_cac = float(cac_high.datas.replace(" ", ""))
+cac_low = WebDriver(cac_url, cac_x_path, 5, 6)
+low_cac = float(cac_low.datas.replace(" ", ""))
 lvc_high = WebDriver(lvc_url, lvc_x_path, 4, 6)
 lvc_low = WebDriver(lvc_url, lvc_x_path, 5, 6)
 high_lvc = float(lvc_high.datas)
 low_lvc = float(lvc_low.datas)
 print(f"Les dernières valeurs disponibles du cac : {high_cac} et du lvc : {high_lvc}")
-print(f"Le plus bas du lvc ce même jour est à {low_lvc}")
-lvc_datas = (high_lvc, low_lvc, high_cac)
+print(f"Le plus bas du lvc ce même jour est à {low_lvc} et le plus bas du cac est {low_cac}")
+lvc_datas = (high_lvc, low_lvc, high_cac, low_cac)
 save_datas("lvc_datas", lvc_datas)
 
 # ------ fusion et sauvegarde de la liste historique (PX_datas) actualisée et de la liste scrapée (new_datas) ------
