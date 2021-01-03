@@ -248,6 +248,7 @@ print("\nLe dernier plus haut local valait " + str(MY_LAST_HIGH) + " points à l
 
 # ------ on crée une boucle qui vérifie si un nouveau plus haut relatif a été réalisé ------
 msg = ""
+new_high_done = False
 try:
     if len(PX_datas) > 0:
         new_high = []
@@ -258,7 +259,7 @@ try:
                     new_high.append(my_item)
                     MY_LAST_HIGH = my_item
                     MY_LAST_DATE = item[0]
-                    msg = "MY_LAST_HIGH vaut maintenant : " + str(MY_LAST_HIGH) + " à la date du " + str(MY_LAST_DATE)
+                    new_high_done = True
                 else:
                     msg = "Pas de nouveau plus haut local effectué, MY_LAST_HIGH vaut toujours " + str(MY_LAST_HIGH)
             else:
@@ -266,6 +267,8 @@ try:
 except TypeError:
     msg = "Le fichier est vide..."
 finally:
+    if new_high_done:
+        msg = "MY_LAST_HIGH vaut maintenant : " + str(MY_LAST_HIGH) + " à la date du " + str(MY_LAST_DATE)
     print(msg)
 
 # ------ sauvegarde de la valeur et de la date du dernier plus haut local ------
