@@ -293,7 +293,12 @@ else:
 # ------ détermination du premier niveau d'achat arrondi sur le LVC, avec objectif +5% et levier x2 ------
 PX_A1 = buy_limit(MY_LAST_HIGH, 5, 1)
 A1 = buy_limit(lvc, 5, 2)
+last_low_PX1 = PX_datas[0][4]
 print("\nLe premier niveau d'achat se situe à " + str(PX_A1) + " points, ce qui équivaut à " + str(A1) + " sur le lvc.")
+
+# ------ sauvegarde des données du premier niveau d'achat pour traitement par la classe Position ------
+buy_limit = (PX_A1, A1, last_low_PX1)
+save_datas("buy_limit", buy_limit)
 
 """
 

@@ -8,11 +8,6 @@
 
 import pickle
 from datetime import date
-# from trading_system import A1, PX_A1
-
-A1 = 18.2
-PX_A1 = 5332
-last_low_PX1 = 5312
 
 
 # ------ quelques fonctions statiques ------
@@ -57,14 +52,10 @@ class Position:
             print("Il faut maintenant créer une nouvelle instance, de vente cette fois.")
 
 
-# ------ récupération des positions enregistrées ------
+# ------ récupération des instances enregistrées de la classe Position ------
 positions = []
 position_nb = 0
-lvc_garbage = ()    # ce tuple vide est créé pour éviter d'écraser lvc_datas à la récupèration de ses données
 positions = get_datas("positions", positions)
-lcv_high, lvc_low, cac_high, cac_low = get_datas("lvc_datas", lvc_garbage)
-print(f"Les données récupérées dans le fichier lvc_datas sont : lvc_high {lcv_high}, low_lvc {lvc_low}, cac_high "
-      f"{cac_high} et cac_low {cac_low}")
 try:
     if len(positions) > 0:
         print(("\nVoici le nombre de positions : " + str(len(positions))))
@@ -73,6 +64,16 @@ try:
         print("\nPas de positions...")
 except TypeError:
     print("\nException levée. Pas de fichier trouvé...")
+
+# ------ récupération des valeurs scrapées du lvc via le fichier lvc_datas ------
+lvc_garbage = ()    # ce tuple vide est créé pour éviter d'écraser lvc_datas à la récupèration de ses données
+lcv_high, lvc_low, cac_high, cac_low = get_datas("lvc_datas", lvc_garbage)
+print(f"Les données récupérées dans le fichier lvc_datas sont : lvc_high {lcv_high}, low_lvc {lvc_low}, cac_high "
+      f"{cac_high} et cac_low {cac_low}")
+
+# ------ récupération des données scrapées du lvc via le fichier buy_limit ------
+A1, PX_A1, last_low_PX1 = get_datas("buy_limit", lvc_garbage)
+print(f"Les données du fichier buy_limit sont pour A1 {A1}, pour PX_A1 {PX_A1} et pour last_low_PX1 {last_low_PX1}")
 
 # ------ récupération de la date du jour ------
 date = date.today()
@@ -101,6 +102,7 @@ save_datas("positions", positions)
 """Il faut importer les données du module trading_system.py et changer les variables arbitrairement affectées.
 
     Il faut changer la variable last_low_PX1 pour une valeur qui capte le plus bas du jour sur le lvc.
+    Il faut récupérer le dernier plus bas relatif réalisé depuis le passage de l'ordre et non le dernier bas en date.
     Si last_low_lvc <= self.price, on considère que l'ordre est passé et on lance un ordre de vente cette fois.
     Autrement dit on crée une nouvelle instance de la classe Position avec les caractéristiques de la vente.
     Peut-être cette dernière instance gardera-t-elle le même nom de A1...
