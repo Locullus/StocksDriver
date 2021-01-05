@@ -84,7 +84,7 @@ print(f"Au format local cela donne {date.day}/{date.month}/{date.year}")
 expiration = f"{date.day}/{date.month + 3}/{date.year}"
 print(f"La date d'expiration à trois mois nous donne {expiration}")
 
-# ------ on reconstruit notre objet position ------
+# ------ on recupère notre objet position, s'il n'existe pas on le crée ------
 lvc_quantity = 500/A1
 if position_nb == 0:
     position_A1 = Position("A1", date, "+", lvc_quantity, "lvc", A1, PX_A1, expiration)
