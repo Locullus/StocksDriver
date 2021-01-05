@@ -1,13 +1,9 @@
-"""création d'une classe qui doit gérer les positions prises. Il s'agit de manipuler des objets conservés dans
-    un fichier lu à chaque lancement. La classe vérifiera si les cours ont touchés une ou plusieurs positions
-    et agira en conséquence.
-    Un ordre est toujours en attente d'une exécution, soit parce qu'il attend que son objectif d'achat soit atteint
-    pour être passé, soit qu'il attend d'être soldé quand son objectif est atteint. Pour les distinguer, on leur
-    assigne donc un état, un signe + ( ordre d'achat en attente d'être exécuté) ou - (ordre de vente en attente
-    d'être exécuté)."""
+"""Ici sont réunies toutes les classes et fonctions utiles au programme principal"""
 
 import pickle
-from datetime import date
+from selenium.common.exceptions import WebDriverException, NoSuchElementException
+from selenium.webdriver import Chrome
+from selenium.webdriver.chrome.options import Options
 
 
 # ------ quelques fonctions statiques ------
@@ -30,8 +26,115 @@ def save_datas(my_file, data):
         return data
 
 
+def get_higher(data):
+    """ retour du plus haut d'une liste de listes si elle n'est pas vide, sinon plus haut de l'historique """
+    try:
+        maxi = [element[3] for element in data]     # liste pour récupérer tous les plus hauts quotidiens à l'index[3]
+        if len(maxi) != 0:
+            return max(maxi)                            # on retourne le plus haut
+        else:
+            return "Pas de nouveau plus haut identifié."
+    except NameError:
+        return "Exception levée : la liste est peut-être vide !"
+
+
+def reformate_data(data):
+    """ reformatage des données et conversion du type string vers float """
+    return float(data.replace(".", "").replace(",", "."))
+
+
+def buy_limit(value, target, leverage):
+    """fonction qui calcule un objectif cible en pourcentage ajusté d'un levier"""
+    return round(value - (((value * target) / 100) * leverage), 2)
+
+
+# ------ configuration de la classe WebDriver ------
+class WebDriver:
+    """ classe qui configure le webDriver pour récupérer des données par leur xpath """
+    def __init__(self, url, x_path, index1, index2, loop=None, last_saved_date=None):
+        self.url = url
+        self.x_path = x_path
+        self.index1 = index1
+        self.index2 = index2
+        self.loop = loop
+        self.last_saved_date = last_saved_date
+        self.options = Options()
+        self.options.headless = True
+        self.options.page_load_strategy = 'normal'
+        with Chrome(executable_path=r"C:\Users\bin\chromedriver.exe", options=self.options) as self.driver:
+            if self.loop == "loop":
+                try:
+                    self.driver.get(self.url)
+                    self.driver.implicitly_wait(2)
+                    self.datas = self.parsing_method()
+                except WebDriverException:
+                    print("Problème avec le WebDriver, vérifiez la connnexion.")
+            else:
+                try:
+                    self.driver.get(self.url)
+                    self.driver.implicitly_wait(2)
+                    self.datas = self.parse_array(self.x_path, self.index1, self.index2)
+                except WebDriverException:
+                    print("Problème avec le WebDriver, vérifiez la connnexion.")
+
+    def parsing_method(self):
+        """ fonction qui détermine le nombre de lignes à scraper et la boucle utilisée """
+        try:
+            self.driver.find_element_by_class_name("redClockBigIcon")
+            nb = 1
+        except NoSuchElementException:
+            print("Marché ouvert : les données du jour ne seront donc pas sauvegardées car encore incomplètes.")
+            nb = 2
+        if self.last_saved_date != "0":
+            my_list = self.while_loop(nb)
+        else:
+            my_list = self.for_loop(nb)
+        return my_list
+
+    def while_loop(self, i):
+        """ fonction qui collecte les données avec une boucle while """
+        my_list = []
+        last_date = self.parse_array(self.x_path, i, 1)
+        while last_date != self.last_saved_date and i < 22:
+            last_date = self.parse_array(self.x_path, i, 1)
+            last = self.parse_array(self.x_path, i, 2)
+            last = reformate_data(last)
+            opening = self.parse_array(self.x_path, i, 3)
+            opening = reformate_data(opening)
+            higher = self.parse_array(self.x_path, i, 4)
+            higher = reformate_data(higher)
+            lower = self.parse_array(self.x_path, i, 5)
+            lower = reformate_data(lower)
+            my_list.append([last_date, last, opening, higher, lower])
+            last_date = self.parse_array(self.x_path, i + 1, 1)
+            i += 1
+        return my_list
+
+    def for_loop(self, nb):
+        """ fonction qui collecte les données avec une boucle for """
+        my_list = []
+        for i in range(nb, 22):
+            last_date = self.parse_array(self.x_path, i, 1)
+            last = self.parse_array(self.x_path, i, 2)
+            last = reformate_data(last)
+            opening = self.parse_array(self.x_path, i, 3)
+            opening = reformate_data(opening)
+            higher = self.parse_array(self.x_path, i, 4)
+            higher = reformate_data(higher)
+            lower = self.parse_array(self.x_path, i, 5)
+            lower = reformate_data(lower)
+            my_list.append([last_date, last, opening, higher, lower])
+        print("La boucle for a retouné : " + str(len(my_list)))
+        return my_list
+
+    def parse_array(self, x_path, index1, index2):
+        """ méthode qui récupère les valeurs du CAC dans le DOM de la page """
+        return self.driver.find_element_by_xpath(x_path.format(str(index1), str(index2))).text
+
+
 # ------ classe qui gère les positions ------
 class Position:
+    """classe qui gère les positions à prendre ou à solder"""
     def __init__(self, name, my_date, sign, quantity, stock, price, px, deadline):
         self.name = name
         self.date = my_date
@@ -42,72 +145,12 @@ class Position:
         self.px = px
         self.deadline = deadline
 
-    def check_position(self):
+    def check_position(self, last_low_px1):
+        """fonction qui vérifie si une position attend d'être prise"""
         if self.sign == "+":
             print("Cette position n'a pas encore été ouverte, elle attend que les cours la touchent.")
         else:
             print("Cette position est ouverte et attend que les cours atteignent son objectif pour être soldée.")
-        if self.px >= last_low_PX1:
+        if self.px >= last_low_px1:
             print("Le cours a été touché, la position est passée !")
             print("Il faut maintenant créer une nouvelle instance, de vente cette fois.")
-
-
-# ------ récupération des instances enregistrées de la classe Position ------
-positions = []
-position_nb = 0
-positions = get_datas("positions", positions)
-try:
-    if len(positions) > 0:
-        print(("\nVoici le nombre de positions : " + str(len(positions))))
-        position_nb = len(positions)
-    else:
-        print("\nPas de positions...")
-except TypeError:
-    print("\nException levée. Pas de fichier trouvé...")
-
-# ------ récupération des valeurs scrapées du lvc via le fichier lvc_datas ------
-lvc_garbage = ()    # ce tuple vide est créé pour éviter d'écraser lvc_datas à la récupèration de ses données
-lcv_high, lvc_low, cac_high, cac_low = get_datas("lvc_datas", lvc_garbage)
-print(f"Les données récupérées dans le fichier lvc_datas sont : lvc_high {lcv_high}, low_lvc {lvc_low}, cac_high "
-      f"{cac_high} et cac_low {cac_low}")
-
-# ------ récupération des données scrapées du lvc via le fichier buy_limit ------
-A1, PX_A1, last_low_PX1 = get_datas("buy_limit", lvc_garbage)
-print(f"Les données du fichier buy_limit sont pour A1 {A1}, pour PX_A1 {PX_A1} et pour last_low_PX1 {last_low_PX1}")
-
-# ------ récupération de la date du jour ------
-date = date.today()
-print("la date du jour est " + str(date))
-print(f"Au format local cela donne {date.day}/{date.month}/{date.year}")
-
-# ------ calcul de la date de validité à 3 mois ------
-expiration = f"{date.day}/{date.month + 3}/{date.year}"
-print(f"La date d'expiration à trois mois nous donne {expiration}")
-
-# ------ on recupère notre objet position, s'il n'existe pas on le crée ------
-lvc_quantity = 500/A1
-if position_nb == 0:
-    position_A1 = Position("A1", date, "+", lvc_quantity, "lvc", A1, PX_A1, expiration)
-    positions.append(position_A1)
-else:
-    position_A1 = positions[0]
-
-print(f"{position_A1.name} : le {position_A1.date} {position_A1.sign} {round(position_A1.quantity)} {position_A1.stock}"
-      f"@{position_A1.price} (PX= {position_A1.px} validité jusqu'au {position_A1.deadline})")
-position_A1.check_position()
-
-# ------ sauvegarde du fichier positions ------
-save_datas("positions", positions)
-
-"""Il faut importer les données du module trading_system.py et changer les variables arbitrairement affectées.
-
-    Il faut changer la variable last_low_PX1 pour une valeur qui capte le plus bas du jour sur le lvc.
-    Il faut récupérer le dernier plus bas relatif réalisé depuis le passage de l'ordre et non le dernier bas en date.
-    Si last_low_lvc <= self.price, on considère que l'ordre est passé et on lance un ordre de vente cette fois.
-    Autrement dit on crée une nouvelle instance de la classe Position avec les caractéristiques de la vente.
-    Peut-être cette dernière instance gardera-t-elle le même nom de A1...
-    
-    Il faut remplacer la ligne A1 à l'achat par la ligne A1 à la vente.
-    
-    Il faut ajouter les plus bas du lvc et du px obtenus depuis boursorama afin que la classe puisse vérifier
-    si les positions en attente à l'achat ont été exécutées. """

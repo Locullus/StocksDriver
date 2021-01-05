@@ -14,14 +14,13 @@
     attendront tranquillement d'être dénouées.
     Le programme considère qu'un nouveau point haut local a été atteint soit parce que l'indice a retracé 300 points,
     soit parce que le plus haut local a été dépassé par l'indice.
+
+    Ici nous avons le programme principal (__main__)
     """
 
 # ------ importation des modules ------
-import pickle
-
-from selenium.common.exceptions import WebDriverException, NoSuchElementException
-from selenium.webdriver import Chrome
-from selenium.webdriver.chrome.options import Options
+from datetime import date
+from classPosition import WebDriver, Position, get_datas, save_datas, get_higher, buy_limit
 
 # ------ affectation de la valeur et de la date du premier point haut local ------
 MY_LAST_HIGH = 5555.83
@@ -39,131 +38,6 @@ lvc_x_path = '//*[@id="main-content"]/div/section[1]/div[2]/article/div[1]/div[1
 loop_url = 'https://fr.investing.com/indices/france-40-historical-data'
 
 loop_x_path = '//*[@id="curr_table"]/tbody/tr[{}]/td[{}]'
-
-
-# ------ quelques fonctions statiques ------
-def get_datas(my_file, data):
-    """ fonction qui récupère les données d'un fichier s'il existe et qui le crée sinon """
-    try:
-        with open(my_file, "rb") as file:
-            get_data = pickle.Unpickler(file)
-            result = get_data.load()
-            return result
-    except FileNotFoundError:
-        save_datas(my_file, data)
-
-
-def save_datas(my_file, data):
-    """ fonction qui enregistre les données dans un fichier externe """
-    with open(my_file, "wb") as file:
-        write_data = pickle.Pickler(file)
-        write_data.dump(data)
-        return data
-
-
-def get_higher(data):
-    """ retour du plus haut d'une liste de listes si elle n'est pas vide, sinon plus haut de l'historique """
-    if len(data) > 0:
-        maxi = [element[3] for element in data]     # liste pour récupérer tous les plus hauts quotidiens à l'index[3]
-        return max(maxi)                            # on retourne le plus haut
-    else:
-        try:
-            return pre_web_higher
-        except NameError:
-            return "Pas de plus haut trouvé : la liste est peut-être vide !"
-
-
-def reformate_data(data):
-    """ reformatage des données et conversion du type string vers float """
-    return float(data.replace(".", "").replace(",", "."))
-
-
-def buy_limit(value, target, leverage):
-    """fonction qui calcule un objectif cible en pourcentage ajusté d'un levier"""
-    return round(value - (((value * target) / 100) * leverage), 2)
-
-
-# ------ configuration de la classe WebDriver ------
-class WebDriver:
-    """ classe qui configure le webDriver pour récupérer des données par leur xpath """
-    def __init__(self, url, x_path, index1, index2, loop=None):
-        self.url = url
-        self.x_path = x_path
-        self.index1 = index1
-        self.index2 = index2
-        self.loop = loop
-        self.options = Options()
-        self.options.headless = True
-        self.options.page_load_strategy = 'normal'
-        with Chrome(executable_path=r"C:\Users\bin\chromedriver.exe", options=self.options) as self.driver:
-            if self.loop == "loop":
-                try:
-                    self.driver.get(self.url)
-                    self.driver.implicitly_wait(2)
-                    self.datas = self.parsing_method()
-                except WebDriverException:
-                    print("Problème avec le WebDriver, vérifiez la connnexion.")
-            else:
-                try:
-                    self.driver.get(self.url)
-                    self.driver.implicitly_wait(2)
-                    self.datas = self.parse_array(self.x_path, self.index1, self.index2)
-                except WebDriverException:
-                    print("Problème avec le WebDriver, vérifiez la connnexion.")
-
-    def parsing_method(self):
-        """ fonction qui détermine le nombre de lignes à scraper et la boucle utilisée """
-        try:
-            self.driver.find_element_by_class_name("redClockBigIcon")
-            nb = 1
-        except NoSuchElementException:
-            print("Marché ouvert : les données du jour ne seront donc pas sauvegardées car encore incomplètes.")
-            nb = 2
-        if last_saved_date != "0":
-            my_list = self.while_loop(nb)
-        else:
-            my_list = self.for_loop(nb)
-        return my_list
-
-    def while_loop(self, i):
-        """ fonction qui collecte les données avec une boucle while """
-        my_list = []
-        last_date = self.parse_array(self.x_path, i, 1)
-        while last_date != last_saved_date and i < 22:
-            last_date = self.parse_array(self.x_path, i, 1)
-            last = self.parse_array(self.x_path, i, 2)
-            last = reformate_data(last)
-            opening = self.parse_array(self.x_path, i, 3)
-            opening = reformate_data(opening)
-            higher = self.parse_array(self.x_path, i, 4)
-            higher = reformate_data(higher)
-            lower = self.parse_array(self.x_path, i, 5)
-            lower = reformate_data(lower)
-            my_list.append([last_date, last, opening, higher, lower])
-            last_date = self.parse_array(self.x_path, i + 1, 1)
-            i += 1
-        return my_list
-
-    def for_loop(self, nb):
-        """ fonction qui collecte les données avec une boucle for """
-        my_list = []
-        for i in range(nb, 22):
-            last_date = self.parse_array(self.x_path, i, 1)
-            last = self.parse_array(self.x_path, i, 2)
-            last = reformate_data(last)
-            opening = self.parse_array(self.x_path, i, 3)
-            opening = reformate_data(opening)
-            higher = self.parse_array(self.x_path, i, 4)
-            higher = reformate_data(higher)
-            lower = self.parse_array(self.x_path, i, 5)
-            lower = reformate_data(lower)
-            my_list.append([last_date, last, opening, higher, lower])
-        print("La boucle for a retouné : " + str(len(my_list)))
-        return my_list
-
-    def parse_array(self, x_path, index1, index2):
-        """ méthode qui récupère les valeurs du CAC dans le DOM de la page """
-        return self.driver.find_element_by_xpath(x_path.format(str(index1), str(index2))).text
 
 
 # ------ chargement du fichier des données historiques ------
@@ -216,16 +90,19 @@ except TypeError:
 
 # ------ mise à jour des dernières données du cac disponibles sur Investing ------
 print("\nChargement du webDriver pour récupérer les dernières données...")
-investing = WebDriver(loop_url, loop_x_path, 1, 1, "loop")
+investing = WebDriver(loop_url, loop_x_path, 1, 1, loop="loop", last_saved_date=last_saved_date)
 investing_datas = investing.datas
 print("Les données scrapées sur le site d'Investing : " + str(investing_datas))
 
 # ------ on vérifie si un nouveau plus haut a été réalisé ------
 post_web_higher = get_higher(investing_datas)
-if post_web_higher > pre_web_higher:
-    print("Un nouveau plus haut a été effectué depuis le dernier chargement : " + str(post_web_higher))
+if isinstance(post_web_higher, str):    # si get_higher retourne une chaîne on l'écrit
+    print(post_web_higher)
 else:
-    print("Aucun nouveau plus haut depuis le dernier chargement.")
+    if post_web_higher > pre_web_higher:    # sinon c'est un float et on peut comparer les valeurs
+        print("Un nouveau plus haut a été effectué depuis le dernier chargement : " + str(post_web_higher))
+    else:
+        print("Aucun nouveau plus haut depuis le dernier chargement.")
 
 # ------ récupération de la dernière valeur disponible du cac et du lvc sur Boursorama ------
 print("\nInstanciation de la classe WebDriver pour récupérer les données sur le site de Boursorama...")
@@ -296,9 +173,70 @@ A1 = buy_limit(lvc, 5, 2)
 last_low_PX1 = PX_datas[0][4]
 print("\nLe premier niveau d'achat se situe à " + str(PX_A1) + " points, ce qui équivaut à " + str(A1) + " sur le lvc.")
 
+# ------ insertion des données du second module ------
 # ------ sauvegarde des données du premier niveau d'achat pour traitement par la classe Position ------
 buy_limit = (PX_A1, A1, last_low_PX1)
 save_datas("buy_limit", buy_limit)
+
+# ------ récupération des instances enregistrées de la classe Position ------
+positions = []
+position_nb = 0
+positions = get_datas("positions", positions)
+try:
+    if len(positions) > 0:
+        print(("\nVoici le nombre de positions : " + str(len(positions))))
+        position_nb = len(positions)
+    else:
+        print("\nPas de positions...")
+except TypeError:
+    print("\nException levée. Pas de fichier trouvé...")
+
+# ------ récupération des valeurs scrapées du lvc via le fichier lvc_datas ------
+lvc_garbage = ()  # ce tuple vide est créé pour éviter d'écraser lvc_datas à la récupèration de ses données
+lcv_high, lvc_low, cac_high, cac_low = get_datas("lvc_datas", lvc_garbage)
+print(f"Les données récupérées dans le fichier lvc_datas sont : lvc_high {lcv_high}, low_lvc {lvc_low}, cac_high "
+      f"{cac_high} et cac_low {cac_low}")
+
+# ------ récupération des données scrapées du lvc via le fichier buy_limit ------
+A1, PX_A1, last_low_PX1 = get_datas("buy_limit", lvc_garbage)
+print(f"Les données du fichier buy_limit sont pour A1 {A1}, pour PX_A1 {PX_A1} et pour last_low_PX1 {last_low_PX1}")
+
+# ------ récupération de la date du jour ------
+date = date.today()
+print("la date du jour est " + str(date))
+print(f"Au format local cela donne {date.day}/{date.month}/{date.year}")
+
+# ------ calcul de la date de validité à 3 mois ------
+expiration = f"{date.day}/{date.month + 3}/{date.year}"
+print(f"La date d'expiration à trois mois nous donne {expiration}")
+
+# ------ on recupère notre objet position, s'il n'existe pas on le crée ------
+lvc_quantity = 500 / A1
+if position_nb == 0:
+    position_A1 = Position("A1", date, "+", lvc_quantity, "lvc", A1, PX_A1, expiration)
+    positions.append(position_A1)
+else:
+    position_A1 = positions[0]
+
+print(f"{position_A1.name} : le {position_A1.date} {position_A1.sign} {round(position_A1.quantity)} {position_A1.stock}"
+      f"@{position_A1.price} (PX= {position_A1.px} validité jusqu'au {position_A1.deadline})")
+position_A1.check_position(last_low_PX1)
+
+# ------ sauvegarde du fichier positions ------
+save_datas("positions", positions)
+
+"""Il faut importer les données du module trading_system.py et changer les variables arbitrairement affectées.
+
+    Il faut changer la variable last_low_PX1 pour une valeur qui capte le plus bas du jour sur le lvc.
+    Il faut récupérer le dernier plus bas relatif réalisé depuis le passage de l'ordre et non le dernier bas en date.
+    Si last_low_lvc <= self.price, on considère que l'ordre est passé et on lance un ordre de vente cette fois.
+    Autrement dit on crée une nouvelle instance de la classe Position avec les caractéristiques de la vente.
+    Peut-être cette dernière instance gardera-t-elle le même nom de A1...
+
+    Il faut remplacer la ligne A1 à l'achat par la ligne A1 à la vente.
+
+    Il faut ajouter les plus bas du lvc et du px obtenus depuis boursorama afin que la classe puisse vérifier
+    si les positions en attente à l'achat ont été exécutées. """
 
 """
 
