@@ -20,11 +20,12 @@
 
 # ------ importation des modules ------
 from datetime import date
-from classPosition import WebDriver, Position, get_datas, save_datas, get_higher, buy_limit
+from classPosition import WebDriver, Position, get_datas, save_datas, get_higher, buy_limit, reformate_datetime
 
 # ------ affectation de la valeur et de la date du premier point haut local ------
 MY_LAST_HIGH = 5555.83
 MY_LAST_DATE = "23/11/2020"
+last_saved_date = "0"
 
 # ------ déclaration des url des xpath des données à scraper ------
 cac_url = 'https://www.boursorama.com/bourse/indices/cours/1rPCAC/'
@@ -45,21 +46,13 @@ PX_datas = []
 PX_datas = get_datas("PX-datas", PX_datas)
 try:
     if len(PX_datas) > 0:
+        last_saved_date = PX_datas[0][0]
         print("Voici le fichier sauvegardé : " + str(PX_datas))
         print("La liste contient : " + str(len(PX_datas)) + " éléments.")
     else:
         print("Aucune donnée sauvegardée. Le fichier est vide.")
 except TypeError:
     print("Exception levée. Le fichier est vide, aucune donnée sauvegardée.")
-
-# ------ récupération de la valeur et de la date du dernier plus haut dans le fichier enrégistré ------
-pre_web_higher = get_higher(PX_datas)
-if len(PX_datas) > 0:
-    last_saved_date = PX_datas[0][0]
-else:
-    last_saved_date = "0"
-
-print("Le dernier plus haut enregistré vaut " + str(pre_web_higher) + " points, à la date du  " + str(last_saved_date))
 
 # ------ chargement du fichier du dernier plus haut local, s'il n'existe pas on le crée ------
 saved_high = ()
@@ -75,19 +68,6 @@ try:
 except TypeError:
     print("Le fichier est vide. Aucun plus haut trouvé.")
 
-# ------ chargement du fichier de sauvegarde des positions ------
-positions_list = []
-positions_list = get_datas("positions_list", positions_list)
-
-# ------ nombre de positions engagées que l'on récupère dans le fichier ------
-try:
-    if len(positions_list) > 0:
-        print("Voici vos positions :" + str(positions_list))
-    else:
-        print("Vous n'avez pas de positions.")
-except TypeError:
-    print("Le fichier est vide. Aucune position n'a encore été prise.")
-
 # ------ mise à jour des dernières données du cac disponibles sur Investing ------
 print("\nChargement du webDriver pour récupérer les dernières données...")
 investing = WebDriver(loop_url, loop_x_path, 1, 1, loop="loop", last_saved_date=last_saved_date)
@@ -99,7 +79,7 @@ post_web_higher = get_higher(investing_datas)
 if isinstance(post_web_higher, str):    # si get_higher retourne une chaîne on l'écrit
     print(post_web_higher)
 else:
-    if post_web_higher > pre_web_higher:    # sinon c'est un float et on peut comparer les valeurs
+    if post_web_higher > MY_LAST_HIGH:    # sinon c'est un float et on peut comparer les valeurs
         print("Un nouveau plus haut a été effectué depuis le dernier chargement : " + str(post_web_higher))
     else:
         print("Aucun nouveau plus haut depuis le dernier chargement.")
@@ -170,13 +150,9 @@ else:
 # ------ détermination du premier niveau d'achat arrondi sur le LVC, avec objectif +5% et levier x2 ------
 PX_A1 = buy_limit(MY_LAST_HIGH, 5, 1)
 A1 = buy_limit(lvc, 5, 2)
-last_low_PX1 = PX_datas[0][4]
 print("\nLe premier niveau d'achat se situe à " + str(PX_A1) + " points, ce qui équivaut à " + str(A1) + " sur le lvc.")
 
 # ------ insertion des données du second module ------
-# ------ sauvegarde des données du premier niveau d'achat pour traitement par la classe Position ------
-buy_limit = (PX_A1, A1, last_low_PX1)
-save_datas("buy_limit", buy_limit)
 
 # ------ récupération des instances enregistrées de la classe Position ------
 positions = []
@@ -184,30 +160,20 @@ position_nb = 0
 positions = get_datas("positions", positions)
 try:
     if len(positions) > 0:
-        print(("\nVoici le nombre de positions : " + str(len(positions))))
         position_nb = len(positions)
+        print(f"\nVoici le nombre de positions : {position_nb}")
     else:
         print("\nPas de positions...")
 except TypeError:
     print("\nException levée. Pas de fichier trouvé...")
 
-# ------ récupération des valeurs scrapées du lvc via le fichier lvc_datas ------
-lvc_garbage = ()  # ce tuple vide est créé pour éviter d'écraser lvc_datas à la récupèration de ses données
-lcv_high, lvc_low, cac_high, cac_low = get_datas("lvc_datas", lvc_garbage)
-print(f"Les données récupérées dans le fichier lvc_datas sont : lvc_high {lcv_high}, low_lvc {lvc_low}, cac_high "
-      f"{cac_high} et cac_low {cac_low}")
-
-# ------ récupération des données scrapées du lvc via le fichier buy_limit ------
-A1, PX_A1, last_low_PX1 = get_datas("buy_limit", lvc_garbage)
-print(f"Les données du fichier buy_limit sont pour A1 {A1}, pour PX_A1 {PX_A1} et pour last_low_PX1 {last_low_PX1}")
-
 # ------ récupération de la date du jour ------
 date = date.today()
-print("la date du jour est " + str(date))
-print(f"Au format local cela donne {date.day}/{date.month}/{date.year}")
+date = reformate_datetime(date)
+print(f"la date du jour est {date}")
 
 # ------ calcul de la date de validité à 3 mois ------
-expiration = f"{date.day}/{date.month + 3}/{date.year}"
+expiration = reformate_datetime(date, 3)
 print(f"La date d'expiration à trois mois nous donne {expiration}")
 
 # ------ on recupère notre objet position, s'il n'existe pas on le crée ------
@@ -218,17 +184,22 @@ if position_nb == 0:
 else:
     position_A1 = positions[0]
 
+# position_A1.date = reformate_datetime(position_A1.date)
+print("\nLa position trouvée dans le fichier est la suivante :")
 print(f"{position_A1.name} : le {position_A1.date} {position_A1.sign} {round(position_A1.quantity)} {position_A1.stock}"
       f"@{position_A1.price} (PX= {position_A1.px} validité jusqu'au {position_A1.deadline})")
-position_A1.check_position(last_low_PX1)
+
+# ------ on vérifie si la position a été exécutée ------
+result = position_A1.check_position(PX_datas)
+print(f"{result[0]} : le {result[1]} {result[2]} {round(result[3])} {result[4]}"
+      f"@{result[5]} (PX= {result[6]} validité jusqu'au {result[7]})")
 
 # ------ sauvegarde du fichier positions ------
 save_datas("positions", positions)
 
-"""Il faut importer les données du module trading_system.py et changer les variables arbitrairement affectées.
-
-    Il faut changer la variable last_low_PX1 pour une valeur qui capte le plus bas du jour sur le lvc.
-    Il faut récupérer le dernier plus bas relatif réalisé depuis le passage de l'ordre et non le dernier bas en date.
+"""
+    Corriger le bug du reformate_datetime et de l'impossibilité d'ajouter 3 mois à la date.    
+    
     Si last_low_lvc <= self.price, on considère que l'ordre est passé et on lance un ordre de vente cette fois.
     Autrement dit on crée une nouvelle instance de la classe Position avec les caractéristiques de la vente.
     Peut-être cette dernière instance gardera-t-elle le même nom de A1...

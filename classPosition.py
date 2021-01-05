@@ -1,6 +1,7 @@
 """Ici sont réunies toutes les classes et fonctions utiles au programme principal"""
 
 import pickle
+from datetime import date
 from selenium.common.exceptions import WebDriverException, NoSuchElementException
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
@@ -29,9 +30,9 @@ def save_datas(my_file, data):
 def get_higher(data):
     """ retour du plus haut d'une liste de listes si elle n'est pas vide, sinon plus haut de l'historique """
     try:
-        maxi = [element[3] for element in data]     # liste pour récupérer tous les plus hauts quotidiens à l'index[3]
+        maxi = [element[3] for element in data]  # liste pour récupérer tous les plus hauts quotidiens à l'index[3]
         if len(maxi) != 0:
-            return max(maxi)                            # on retourne le plus haut
+            return max(maxi)  # on retourne le plus haut
         else:
             return "Pas de nouveau plus haut identifié."
     except NameError:
@@ -48,9 +49,25 @@ def buy_limit(value, target, leverage):
     return round(value - (((value * target) / 100) * leverage), 2)
 
 
+def reformate_datetime(data, deadline=None):
+    """transforme les dates enregistrées sous forme de chaînes en objets de la classe datetime"""
+    data = str(data)
+    data = data.replace("-", "/")
+    my_date = data.split("/")
+    if deadline is not None:
+        my_date = int(my_date[1]) + 3   # impossible d'ajouter 3 au mois...
+    try:
+        my_date = date(int(my_date[2]), int(my_date[1]), int(my_date[0]))
+    except ValueError:
+        my_date = date(int(my_date[0]), int(my_date[1]), int(my_date[2]))
+    my_date = f"{my_date.day}/{my_date.month}/{my_date.year}"
+    return str(my_date)
+
+
 # ------ configuration de la classe WebDriver ------
 class WebDriver:
     """ classe qui configure le webDriver pour récupérer des données par leur xpath """
+
     def __init__(self, url, x_path, index1, index2, loop=None, last_saved_date=None):
         self.url = url
         self.x_path = x_path
@@ -135,9 +152,10 @@ class WebDriver:
 # ------ classe qui gère les positions ------
 class Position:
     """classe qui gère les positions à prendre ou à solder"""
+
     def __init__(self, name, my_date, sign, quantity, stock, price, px, deadline):
         self.name = name
-        self.date = my_date
+        self.date = reformate_datetime(my_date)
         self.sign = sign
         self.quantity = quantity
         self.stock = stock
@@ -145,12 +163,22 @@ class Position:
         self.px = px
         self.deadline = deadline
 
-    def check_position(self, last_low_px1):
+    def check_position(self, list_data):
         """fonction qui vérifie si une position attend d'être prise"""
         if self.sign == "+":
-            print("Cette position n'a pas encore été ouverte, elle attend que les cours la touchent.")
-        else:
-            print("Cette position est ouverte et attend que les cours atteignent son objectif pour être soldée.")
-        if self.px >= last_low_px1:
-            print("Le cours a été touché, la position est passée !")
-            print("Il faut maintenant créer une nouvelle instance, de vente cette fois.")
+            self.date = reformate_datetime(self.date)
+            my_list = []
+            for element in list_data:
+                my_element = reformate_datetime(element[0])
+                if my_element != self.date:
+                    my_list.insert(0, element)
+                break
+            for element in my_list:
+                if float(element[4]) <= self.price:
+                    print(str(element[4]), str(self.price))
+                    self.date = element[0]
+                    self.deadline = reformate_datetime(self.date, 3)
+                    self.px *= 1.05
+                    self.price *= 1.1
+                    self.sign = "-"
+            return self.name, self.date, self.sign, self.quantity, self.stock, self.price, self.px, self.deadline
