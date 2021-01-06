@@ -15,7 +15,7 @@ def get_datas(my_file, data):
             get_data = pickle.Unpickler(file)
             result = get_data.load()
             return result
-    except FileNotFoundError:
+    except (FileNotFoundError, EOFError):   # EOFError concerne les fichiers existants mais vides
         save_datas(my_file, data)
 
 
@@ -49,18 +49,19 @@ def buy_limit(value, target, leverage):
     return round(value - (((value * target) / 100) * leverage), 2)
 
 
-def reformate_datetime(data, deadline=None):
+def reformate_datetime(my_date, deadline=None):
     """transforme les dates enregistrées sous forme de chaînes en objets de la classe datetime"""
-    data = str(data)
-    data = data.replace("-", "/")
-    my_date = data.split("/")
+    my_date = str(my_date)
+    my_date = my_date.replace("-", "/")
+    my_date = my_date.split("/")
     if deadline is not None:
-        my_date = int(my_date[1]) + 3   # impossible d'ajouter 3 au mois...
+        my_month = int(my_date[1]) + 3
+        my_date = date(int(my_date[0]), my_month, int(my_date[2]))
+        return str(my_date)
     try:
         my_date = date(int(my_date[2]), int(my_date[1]), int(my_date[0]))
-    except ValueError:
+    except (ValueError, TypeError):
         my_date = date(int(my_date[0]), int(my_date[1]), int(my_date[2]))
-    my_date = f"{my_date.day}/{my_date.month}/{my_date.year}"
     return str(my_date)
 
 

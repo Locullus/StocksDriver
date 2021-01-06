@@ -169,7 +169,7 @@ except TypeError:
 
 # ------ récupération de la date du jour ------
 date = date.today()
-date = reformate_datetime(date)
+date = reformate_datetime(date)     # la fonction semble renvoyer un objet identique à l'entrée...
 print(f"la date du jour est {date}")
 
 # ------ calcul de la date de validité à 3 mois ------
@@ -184,8 +184,8 @@ if position_nb == 0:
 else:
     position_A1 = positions[0]
 
-# position_A1.date = reformate_datetime(position_A1.date)
-print("\nLa position trouvée dans le fichier est la suivante :")
+position_A1.date = reformate_datetime(position_A1.date)
+print("\nLa position trouvée est la suivante :")
 print(f"{position_A1.name} : le {position_A1.date} {position_A1.sign} {round(position_A1.quantity)} {position_A1.stock}"
       f"@{position_A1.price} (PX= {position_A1.px} validité jusqu'au {position_A1.deadline})")
 
@@ -197,8 +197,8 @@ print(f"{result[0]} : le {result[1]} {result[2]} {round(result[3])} {result[4]}"
 # ------ sauvegarde du fichier positions ------
 save_datas("positions", positions)
 
-"""
-    Corriger le bug du reformate_datetime et de l'impossibilité d'ajouter 3 mois à la date.    
+"""    
+    Revoir la fonction reformate_datetime() qui semble parfois travailler pour renvoyer un résultat identique à l'entrée
     
     Si last_low_lvc <= self.price, on considère que l'ordre est passé et on lance un ordre de vente cette fois.
     Autrement dit on crée une nouvelle instance de la classe Position avec les caractéristiques de la vente.
@@ -208,7 +208,6 @@ save_datas("positions", positions)
 
     Il faut ajouter les plus bas du lvc et du px obtenus depuis boursorama afin que la classe puisse vérifier
     si les positions en attente à l'achat ont été exécutées. """
-
 """
 
 creuser les assertions en python (assert) qui semblent proches de try except pour lever des erreurs.
