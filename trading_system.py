@@ -177,7 +177,7 @@ expiration = reformate_datetime(today, 90)
 print(f"La date d'expiration à 90 jours nous donne le {expiration}")
 
 # ------ on recupère notre objet position, s'il n'existe pas on le crée ------
-lvc_quantity = 500 / A1
+lvc_quantity = round(500 / A1)
 if position_nb == 0:
     position_A1 = Position("A1", string_date, "+", lvc_quantity, "lvc", A1, PX_A1, expiration)
     positions.append(position_A1)
@@ -185,7 +185,7 @@ else:
     position_A1 = positions[0]
 
 print("\nLa position existante est la suivante :")
-print(f"{position_A1.name} : le {position_A1.date} {position_A1.sign} {round(position_A1.quantity)} {position_A1.stock}"
+print(f"{position_A1.name} : le {position_A1.date} {position_A1.sign} {position_A1.quantity} {position_A1.stock}"
       f"@{position_A1.price} (PX= {position_A1.px}) [validité jusqu'au {position_A1.deadline}]")
 
 # ------ on vérifie si la position a été exécutée ------
@@ -194,7 +194,7 @@ result = []
 for position in positions:
     result = position.check_position(PX_datas)
     print(f"{position.name} : le {position.date} {position.sign} {position.quantity}"
-          f" {position.stock}@{position.price} (PX= {position.px} validité jusqu'au {position.deadline})")
+          f" {position.stock}@{position.price} (PX={position.px}) validité jusqu'au {position.deadline})")
     print(f"La variable result nous donne : {result}")
 
 # ------ sauvegarde du fichier positions ------

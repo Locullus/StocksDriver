@@ -167,7 +167,7 @@ class Position:
         self.name = name
         self.date = reformate_datetime(my_date)
         self.sign = sign
-        self.quantity = round(quantity)
+        self.quantity = quantity
         self.stock = stock
         self.price = price
         self.px = px
@@ -175,14 +175,14 @@ class Position:
 
     def check_position(self, list_data):
         """fonction qui vérifie si une position a été exécutée"""
-        if self.sign == "+":
-            my_list = []
-            for element in list_data:
-                if element[0] != self.date:
-                    my_list.insert(0, element)
-                    print(my_list)
-                break
-            for element in my_list:
+        my_list = []
+        for element in list_data:
+            if element[0] != self.date:
+                my_list.insert(0, element)
+                print("Voici la liste depuis la création de la ligne jusqu'à son exécution." + str(my_list))
+            break
+        for element in my_list:
+            if self.sign == "+":
                 if float(element[4]) <= self.price:
                     print(f"le niveau a été touché sur le cours de {element[4]} au prix de {self.price} sur le lvc.")
                     self.date = element[0]
@@ -190,4 +190,10 @@ class Position:
                     self.px *= 1.05
                     self.price *= 1.1
                     self.sign = "-"
-            return self.name, self.date, self.sign, self.quantity, self.stock, self.price, self.px, self.deadline
+                return self.name, self.date, self.sign, self.quantity, self.stock, self.price, self.px, self.deadline
+            if self.sign == "-":
+                if float(element[4]) >= self.price:
+                    print(f"La position a été soldée sur le cours de {element[4]} au prix de {self.price}.")
+
+        # il faut maintenant calculer la performance de la ligne avant de la supprimer
+        # peut-être pourrions-nous la sauvegarder dans un historique...
