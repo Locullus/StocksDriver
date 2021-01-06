@@ -173,8 +173,8 @@ string_date = reformate_datetime(today)     # la fonction semble renvoyer un obj
 print(f"la date du jour est {string_date}")
 
 # ------ calcul de la date de validité à 3 mois ------
-expiration = reformate_datetime(today, 3)
-print(f"La date d'expiration à trois mois nous donne {expiration}")
+expiration = reformate_datetime(today, 90)
+print(f"La date d'expiration à 90 jours nous donne le {expiration}")
 
 # ------ on recupère notre objet position, s'il n'existe pas on le crée ------
 lvc_quantity = 500 / A1
@@ -184,16 +184,21 @@ if position_nb == 0:
 else:
     position_A1 = positions[0]
 
-print("\nLa position trouvée est la suivante :")
+print("\nLa position existante est la suivante :")
 print(f"{position_A1.name} : le {position_A1.date} {position_A1.sign} {round(position_A1.quantity)} {position_A1.stock}"
-      f"@{position_A1.price} (PX= {position_A1.px} validité jusqu'au {position_A1.deadline})")
+      f"@{position_A1.price} (PX= {position_A1.px}) [validité jusqu'au {position_A1.deadline}]")
 
 # ------ on vérifie si la position a été exécutée ------
-result = position_A1.check_position(PX_datas)
-print(f"{result[0]} : le {result[1]} {result[2]} {round(result[3])} {result[4]}"
-      f"@{result[5]} (PX= {result[6]} validité jusqu'au {result[7]})")
+print("\nOn vérifie si la position a été touchée et on obtient ceci :")
+result = []
+for position in positions:
+    result = position.check_position(PX_datas)
+    print(f"{position.name} : le {position.date} {position.sign} {position.quantity}"
+          f" {position.stock}@{position.price} (PX= {position.px} validité jusqu'au {position.deadline})")
+    print(f"La variable result nous donne : {result}")
 
 # ------ sauvegarde du fichier positions ------
+print("Le fichier 'positions' a été sauvegardé.")
 save_datas("positions", positions)
 
 """    

@@ -1,7 +1,7 @@
 """Ici sont réunies toutes les classes et fonctions utiles au programme principal"""
 
 import pickle
-from datetime import date
+from datetime import date, timedelta
 from selenium.common.exceptions import WebDriverException, NoSuchElementException
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
@@ -50,19 +50,28 @@ def buy_limit(value, target, leverage):
 
 
 def reformate_datetime(data, deadline=None):
-    """retour les dates en entrée en chaîne au format 'jj/mm/aaaa' """
     if isinstance(data, date):
-        my_day = data.day
-        my_month = data.month
         if deadline is not None:
-            my_month = data.month + deadline
+            data = data + timedelta(days=deadline)
+        my_month = data.month
+        my_day = data.day
         if my_month < 10:
             my_month = f"0{my_month}"
         if my_day < 10:
             my_day = f"0{my_day}"
         return f"{my_day}/{my_month}/{data.year}"
-    else:
-        return data
+    if isinstance(data, str):
+        data = data.split("/")
+        date_object = date(int(data[2]), int(data[1]), int(data[0]))
+        if deadline is not None:
+            date_object = date_object + timedelta(days=deadline)
+        my_month = date_object.month
+        my_day = date_object.day
+        if my_month < 10:
+            my_month = f"0{my_month}"
+        if my_day < 10:
+            my_day = f"0{my_day}"
+        return f"{my_day}/{my_month}/{date_object.year}"
 
 
 # ------ configuration de la classe WebDriver ------
@@ -158,25 +167,26 @@ class Position:
         self.name = name
         self.date = reformate_datetime(my_date)
         self.sign = sign
-        self.quantity = quantity
+        self.quantity = round(quantity)
         self.stock = stock
         self.price = price
         self.px = px
         self.deadline = deadline
 
     def check_position(self, list_data):
-        """fonction qui vérifie si une position attend d'être prise"""
+        """fonction qui vérifie si une position a été exécutée"""
         if self.sign == "+":
             my_list = []
             for element in list_data:
                 if element[0] != self.date:
                     my_list.insert(0, element)
+                    print(my_list)
                 break
             for element in my_list:
                 if float(element[4]) <= self.price:
-                    print(str(element[4]), str(self.price))
+                    print(f"le niveau a été touché sur le cours de {element[4]} au prix de {self.price} sur le lvc.")
                     self.date = element[0]
-                    self.deadline = reformate_datetime(self.date, 3)
+                    self.deadline = reformate_datetime(self.date, 90)
                     self.px *= 1.05
                     self.price *= 1.1
                     self.sign = "-"
