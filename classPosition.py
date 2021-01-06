@@ -194,6 +194,10 @@ class Position:
             if self.sign == "-":
                 if float(element[4]) >= self.price:
                     print(f"La position a été soldée sur le cours de {element[4]} au prix de {self.price}.")
+                    self.sign = ""
+                    self.date = (0, 0, 0)
+                    self.price = 0
+                return self.name, self.date, self.sign, self.quantity, self.stock, self.price, self.px, self.deadline
 
         # il faut maintenant calculer la performance de la ligne avant de la supprimer
         # peut-être pourrions-nous la sauvegarder dans un historique...
