@@ -168,23 +168,22 @@ except TypeError:
     print("\nException levée. Pas de fichier trouvé...")
 
 # ------ récupération de la date du jour ------
-date = date.today()
-date = reformate_datetime(date)     # la fonction semble renvoyer un objet identique à l'entrée...
-print(f"la date du jour est {date}")
+today = date.today()
+string_date = reformate_datetime(today)     # la fonction semble renvoyer un objet identique à l'entrée...
+print(f"la date du jour est {string_date}")
 
 # ------ calcul de la date de validité à 3 mois ------
-expiration = reformate_datetime(date, 3)
+expiration = reformate_datetime(today, 3)
 print(f"La date d'expiration à trois mois nous donne {expiration}")
 
 # ------ on recupère notre objet position, s'il n'existe pas on le crée ------
 lvc_quantity = 500 / A1
 if position_nb == 0:
-    position_A1 = Position("A1", date, "+", lvc_quantity, "lvc", A1, PX_A1, expiration)
+    position_A1 = Position("A1", string_date, "+", lvc_quantity, "lvc", A1, PX_A1, expiration)
     positions.append(position_A1)
 else:
     position_A1 = positions[0]
 
-position_A1.date = reformate_datetime(position_A1.date)
 print("\nLa position trouvée est la suivante :")
 print(f"{position_A1.name} : le {position_A1.date} {position_A1.sign} {round(position_A1.quantity)} {position_A1.stock}"
       f"@{position_A1.price} (PX= {position_A1.px} validité jusqu'au {position_A1.deadline})")
@@ -198,8 +197,6 @@ print(f"{result[0]} : le {result[1]} {result[2]} {round(result[3])} {result[4]}"
 save_datas("positions", positions)
 
 """    
-    Revoir la fonction reformate_datetime() qui semble parfois travailler pour renvoyer un résultat identique à l'entrée
-    
     Si last_low_lvc <= self.price, on considère que l'ordre est passé et on lance un ordre de vente cette fois.
     Autrement dit on crée une nouvelle instance de la classe Position avec les caractéristiques de la vente.
     Peut-être cette dernière instance gardera-t-elle le même nom de A1...

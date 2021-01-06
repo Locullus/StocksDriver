@@ -49,20 +49,20 @@ def buy_limit(value, target, leverage):
     return round(value - (((value * target) / 100) * leverage), 2)
 
 
-def reformate_datetime(my_date, deadline=None):
-    """transforme les dates enregistrées sous forme de chaînes en objets de la classe datetime"""
-    my_date = str(my_date)
-    my_date = my_date.replace("-", "/")
-    my_date = my_date.split("/")
-    if deadline is not None:
-        my_month = int(my_date[1]) + 3
-        my_date = date(int(my_date[0]), my_month, int(my_date[2]))
-        return str(my_date)
-    try:
-        my_date = date(int(my_date[2]), int(my_date[1]), int(my_date[0]))
-    except (ValueError, TypeError):
-        my_date = date(int(my_date[0]), int(my_date[1]), int(my_date[2]))
-    return str(my_date)
+def reformate_datetime(data, deadline=None):
+    """retour les dates en entrée en chaîne au format 'jj/mm/aaaa' """
+    if isinstance(data, date):
+        my_day = data.day
+        my_month = data.month
+        if deadline is not None:
+            my_month = data.month + deadline
+        if my_month < 10:
+            my_month = f"0{my_month}"
+        if my_day < 10:
+            my_day = f"0{my_day}"
+        return f"{my_day}/{my_month}/{data.year}"
+    else:
+        return data
 
 
 # ------ configuration de la classe WebDriver ------
@@ -167,11 +167,9 @@ class Position:
     def check_position(self, list_data):
         """fonction qui vérifie si une position attend d'être prise"""
         if self.sign == "+":
-            self.date = reformate_datetime(self.date)
             my_list = []
             for element in list_data:
-                my_element = reformate_datetime(element[0])
-                if my_element != self.date:
+                if element[0] != self.date:
                     my_list.insert(0, element)
                 break
             for element in my_list:
