@@ -194,10 +194,22 @@ class Position:
             if self.sign == "-":
                 if float(element[4]) >= self.price:
                     print(f"La position a été soldée sur le cours de {element[4]} au prix de {self.price}.")
-                    self.sign = ""
-                    self.date = (0, 0, 0)
-                    self.price = 0
-                return self.name, self.date, self.sign, self.quantity, self.stock, self.price, self.px, self.deadline
 
-        # il faut maintenant calculer la performance de la ligne avant de la supprimer
-        # peut-être pourrions-nous la sauvegarder dans un historique...
+                    """
+                    J'arrête ici le développement de mon code pour me plonger dans l'apprentissage ou
+                    l'approfondissement d'autres langages en vue d'une reconversion.
+                    Je me permets de le faire parce que d'une part en l'état le code est fonctionnel et
+                    que d'autre part je n'ai encore que les grandes lignes de ce qui doit être fait sans
+                    avoir réfléchi à comment le faire
+                        
+                    Ce qu'il faudra faire :
+                        - garder une trace de la position soldée avec calcul de la performance.
+                        - créer dans ce fichier 3 positions (au moins) lorsque positions = 0 (A1, A2, A3)
+                        - vérifier dans le fichier positions le nombre de lignes restantes :
+                            - si positions = 0:
+                                on recrée une ligne à PX-5% depuis le dernier plus haut et les suivantes à PX-2%
+                            - sinon :
+                                on recrée la ligne qui vient d'être soldée sur son précédent niveau d'achat (du coup
+                                il faut en garder une trace dans uner variable)
+                        - il faut trouver à pondérer les lignes en fonction du RSI J ou H
+                                """

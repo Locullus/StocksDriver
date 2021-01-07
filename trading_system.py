@@ -201,54 +201,36 @@ for position in positions:
 print("Le fichier 'positions' a été sauvegardé.")
 save_datas("positions", positions)
 
-"""    
-    Si last_low_lvc <= self.price, on considère que l'ordre est passé et on lance un ordre de vente cette fois.
-    Autrement dit on crée une nouvelle instance de la classe Position avec les caractéristiques de la vente.
-    Peut-être cette dernière instance gardera-t-elle le même nom de A1...
+quit()
 
-    Il faut remplacer la ligne A1 à l'achat par la ligne A1 à la vente.
-
-    Il faut ajouter les plus bas du lvc et du px obtenus depuis boursorama afin que la classe puisse vérifier
-    si les positions en attente à l'achat ont été exécutées. """
 """
-
-creuser les assertions en python (assert) qui semblent proches de try except pour lever des erreurs.
-
-pre_web_higher, post_web_higher et même fonction get_higher() sont peut-être inutiles.
-Je n'ai pas besoin de connaître les plus hauts historiques en remontant trop loin, ce qu'il me faut c'est déterminer
-le dernier plus haut depuis la dernière revente. Donc quand POSITIONS = 0, traquer le NEW_HIGH et acheter à -5%.
-Les lignes concernées sont 64-75, 174-180 et 215-221."""
-
-
-"""il faut créer une fonction qui vérifie si, entre la date du jour et la dernière date chargée, le plus bas < achat1
-cette fonction pourra prendre des arguments afin de servir à plusieurs vérifications de cet ordre
-
-L'algorithme est le suivant :
-
-A L'ACHAT :
-1-  IF POSITION = 0:
-        +A1 à LAST_HIGH-5%
-        +A2 à A1-2%
-        +A3 à A2-2%
-2-   IF POSITION = 0 AND NEW_HIGH:
-        ANNULATION A1 A2 A3
-        +A1 à NEW_HIGH-5%
-        +A2 à A1-2%
-        +A3 à A2-2%
-3-  IF POSITION > 0:
-        +A à (A-1)-2%
-        DONC SI A7 => ACHAT à A6-2%
-APRES LA VENTE :
-3-   IF POSITION > 0:
-        +A à -5%
-4-   IF POSITION = 0:
-        RETOUR à 1
-        
 L'idée est de traquer l'indice de référence pour se placer à l'achat dès qu'il perd 5%.
 L'objectif de revente est à +5%.
 Quand une ligne est prise, les ordres suivants se situent 2% plus bas.
 Jusqu'à ce qu'il ne reste qu'une seule position, toutes les positions vendues seront reprises à -5%.
 Quand toutes les lignes sont vendues, on recommence en traquant un nouveau plus haut sur l'indice pour acheter à -5%.
-        """
+        
+L'algorithme est le suivant :
 
-quit()
+A L'ACHAT :
+1-  IF POSITIONS = 0:
+        +A1 à LAST_HIGH-5%
+        +A2 à A1-2%
+        +A3 à A2-2%
+2-   IF POSITIONS = 0 AND NEW_HIGH:
+        ANNULATION A1 A2 A3
+        +A1 à NEW_HIGH-5%
+        +A2 à A1-2%
+        +A3 à A2-2%
+3-  IF POSITION > 0:
+        FOR POSITION IN POSITIONS:
+        ON RECUPERERE LES POSITIONS DANS LE FICHIER
+        ON VERIFIE SI LE NIVEAU D'ACHAT EST TOUCHE
+A LA VENTE :
+4-   DES QUE LE COURS EST TOUCHE:
+    IF POSITIONS = 0:
+        RETOUR à 1
+    IF POSITIONS > 0:
+        REPRISE DE LA POSITION SUR NIVEAU ACHAT PRECEDENT
+        RETOUR A 3
+        """
