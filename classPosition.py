@@ -179,10 +179,11 @@ class Position:
         for element in list_data:
             if element[0] != self.date:
                 my_list.insert(0, element)
-                print("Voici la liste depuis la création de la ligne jusqu'à son exécution." + str(my_list))
-            break
-        for element in my_list:
-            if self.sign == "+":
+            else:
+                break
+        print("Voici la liste depuis la création de la ligne jusqu'à son exécution." + str(my_list))
+        if self.sign == "+":
+            for element in my_list:
                 if float(element[4]) <= self.price:
                     print(f"le niveau a été touché sur le cours de {element[4]} au prix de {self.price} sur le lvc.")
                     self.date = element[0]
@@ -190,12 +191,16 @@ class Position:
                     self.px *= 1.05
                     self.price *= 1.1
                     self.sign = "-"
-                return self.name, self.date, self.sign, self.quantity, self.stock, self.price, self.px, self.deadline
-            if self.sign == "-":
+                    return \
+                        self.name, self.date, self.sign, self.quantity, self.stock, self.price, self.px, self.deadline
+            print("La position n'a pas encore été touchée. Elle reste en attente.")
+        if self.sign == "-":
+            for element in my_list:
                 if float(element[4]) >= self.price:
                     print(f"La position a été soldée sur le cours de {element[4]} au prix de {self.price}.")
 
-                    """
+
+"""
                     J'arrête ici le développement de mon code pour me plonger dans l'apprentissage ou
                     l'approfondissement d'autres langages en vue d'une reconversion.
                     Je me permets de le faire parce que d'une part en l'état le code est fonctionnel et
@@ -203,6 +208,8 @@ class Position:
                     avoir réfléchi à comment le faire
                         
                     Ce qu'il faudra faire :
+                        - lorsqu'aucune position n'est passée il faut prendre en compte le premier niveau d'achat
+                        
                         - garder une trace de la position soldée avec calcul de la performance.
                         - créer dans ce fichier 3 positions (au moins) lorsque positions = 0 (A1, A2, A3)
                         - vérifier dans le fichier positions le nombre de lignes restantes :
