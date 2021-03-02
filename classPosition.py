@@ -200,5 +200,3 @@ class Position:
                 if float(element[4]) >= self.price:
                     print(f"La position a été soldée sur le cours de {element[4]} au prix de {self.price}.")
                 print("La position n'a pas encore été soldée.")
-
-
