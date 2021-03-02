@@ -193,11 +193,13 @@ class Position:
                     self.sign = "-"
                     return \
                         self.name, self.date, self.sign, self.quantity, self.stock, self.price, self.px, self.deadline
-            print("La position n'a pas encore été touchée. Elle reste en attente.")
+            print("La position n'a pas encore été prise.")
+            return self.name, self.date, self.sign, self.quantity, self.stock, self.price, self.px, self.deadline
         if self.sign == "-":
             for element in my_list:
                 if float(element[4]) >= self.price:
                     print(f"La position a été soldée sur le cours de {element[4]} au prix de {self.price}.")
+                print("La position n'a pas encore été soldée.")
 
 
 """
