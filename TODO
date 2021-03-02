@@ -1,0 +1,3 @@
+ Mise en pause du développement, fonctionnel en l'état.
+ Il reste à implémenter les envois de mail lorsque les positions évoluent.
+ Il faudra ensuite développer les passages d'ordres automatisés.
