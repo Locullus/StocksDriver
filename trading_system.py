@@ -26,6 +26,7 @@ from classPosition import WebDriver, Position, get_datas, save_datas, get_higher
 MY_LAST_HIGH = 5555.83
 MY_LAST_DATE = "23/11/2020"
 last_saved_date = "0"
+new_higher = False
 
 # ------ déclaration des url des xpath des données à scraper ------
 cac_url = 'https://www.boursorama.com/bourse/indices/cours/1rPCAC/'
@@ -39,7 +40,6 @@ lvc_x_path = '//*[@id="main-content"]/div/section[1]/div[2]/article/div[1]/div[1
 loop_url = 'https://fr.investing.com/indices/france-40-historical-data'
 
 loop_x_path = '//*[@id="curr_table"]/tbody/tr[{}]/td[{}]'
-
 
 # ------ chargement du fichier des données historiques ------
 PX_datas = []
@@ -76,10 +76,11 @@ print("Les données scrapées sur le site d'Investing : " + str(investing_datas)
 
 # ------ on vérifie si un nouveau plus haut a été réalisé ------
 post_web_higher = get_higher(investing_datas)
-if isinstance(post_web_higher, str):    # si get_higher retourne une chaîne on l'écrit
+if isinstance(post_web_higher, str):  # si get_higher retourne une chaîne on l'écrit
     print(post_web_higher)
 else:
-    if post_web_higher > MY_LAST_HIGH:    # sinon c'est un float et on peut comparer les valeurs
+    if post_web_higher > MY_LAST_HIGH:  # sinon c'est un float et on peut comparer les valeurs
+        new_higher = True
         print("Un nouveau plus haut a été effectué depuis le dernier chargement : " + str(post_web_higher))
     else:
         print("Aucun nouveau plus haut depuis le dernier chargement.")
@@ -169,7 +170,7 @@ except TypeError:
 
 # ------ récupération de la date du jour ------
 today = date.today()
-string_date = reformate_datetime(today)     # la fonction semble renvoyer un objet identique à l'entrée...
+string_date = reformate_datetime(today)  # la fonction semble renvoyer un objet identique à l'entrée...
 print(f"la date du jour est {string_date}")
 
 # ------ calcul de la date de validité à 3 mois ------
@@ -197,7 +198,13 @@ for position in positions:
           f" {position.stock}@{position.price} (PX={position.px}) validité jusqu'au {position.deadline})")
     print(f"La variable result nous donne : {result}")
 
-# ------ sauvegarde du fichier positions ------
+    # ------ on vérifie si la position existante est toujours relative au dernier plus haut ------
+    if position.sign == "+" and new_higher:
+        print("L'ordre d'achat non exécuté va être actualisé pour refléter le nouveau plus haut atteint.")
+
+        # ajouter ici le code pour mettre à jour la nouvelle position (date du dernier plus haut, calcul du prix cible)
+
+    # ------ sauvegarde du fichier positions ------
 print("Le fichier 'positions' a été sauvegardé.")
 save_datas("positions", positions)
 
