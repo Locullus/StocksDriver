@@ -50,6 +50,7 @@ def buy_limit(value, target, leverage):
 
 
 def reformate_datetime(data, deadline=None):
+    """fonction qui renvoie les dates dans un format unique"""
     if isinstance(data, date):
         if deadline is not None:
             data = data + timedelta(days=deadline)
@@ -72,6 +73,17 @@ def reformate_datetime(data, deadline=None):
         if my_day < 10:
             my_day = f"0{my_day}"
         return f"{my_day}/{my_month}/{date_object.year}"
+
+
+def set_delta(high_cac, MY_LAST_HIGH, high_lvc):
+    """fonction qui calcule le prix d'un actif à effet de levier par rapport à son sous-jacent"""
+    if high_cac > MY_LAST_HIGH:
+        delta = abs(((MY_LAST_HIGH * 100) / high_cac) - 100) * 2
+        lvc = high_lvc - ((high_lvc * delta) / 100)
+    else:
+        delta = abs(((high_cac * 100) / MY_LAST_HIGH) - 100) * 2
+        lvc = abs(high_lvc + ((high_lvc * delta) / 100))
+    return lvc
 
 
 # ------ configuration de la classe WebDriver ------

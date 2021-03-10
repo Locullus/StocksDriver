@@ -20,7 +20,8 @@
 
 # ------ importation des modules ------
 from datetime import date
-from classPosition import WebDriver, Position, get_datas, save_datas, get_higher, buy_limit, reformate_datetime
+from classPosition import WebDriver, Position, get_datas, save_datas,\
+    get_higher, buy_limit, reformate_datetime, set_delta
 
 # ------ affectation de la valeur et de la date du premier point haut local ------
 MY_LAST_HIGH = 5555.83
@@ -140,13 +141,8 @@ finally:
 saved_high = (MY_LAST_HIGH, MY_LAST_DATE)
 save_datas("saved_high", saved_high)
 
-# ------ prise en compte du leverage x2 : calcul du delta ------
-if high_cac > MY_LAST_HIGH:
-    delta = abs(((MY_LAST_HIGH * 100) / high_cac) - 100) * 2
-    lvc = high_lvc - ((high_lvc * delta) / 100)
-else:
-    delta = abs(((high_cac * 100) / MY_LAST_HIGH) - 100) * 2
-    lvc = abs(high_lvc + ((high_lvc * delta) / 100))
+# ------ prise en compte du leverage x2 : fonction qui calcule le delta ------
+lvc = set_delta(high_cac, MY_LAST_HIGH, high_lvc)
 
 # ------ détermination du premier niveau d'achat arrondi sur le LVC, avec objectif +5% et levier x2 ------
 PX_A1 = buy_limit(MY_LAST_HIGH, 5, 1)
