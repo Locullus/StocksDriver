@@ -100,6 +100,8 @@ class WebDriver:
         self.options = Options()
         self.options.headless = True
         self.options.page_load_strategy = 'normal'
+
+        # ATTENTION : l'argument 'executable_path' doit pointer vers l'exécutable du webdriver installé
         with Chrome(executable_path=r"C:\Users\bin\chromedriver.exe", options=self.options) as self.driver:
             if self.loop == "loop":
                 try:
@@ -114,7 +116,7 @@ class WebDriver:
                     self.driver.implicitly_wait(2)
                     self.datas = self.parse_array(self.x_path, self.index1, self.index2)
                 except WebDriverException:
-                    print("Problème avec le WebDriver, vérifiez la connnexion.")
+                    print("Problème avec le WebDriver, vérifiez le chemin vers l'exécutable ou votre connnexion.")
 
     def parsing_method(self):
         """ fonction qui détermine le nombre de lignes à scraper et la boucle utilisée """
