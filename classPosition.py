@@ -193,7 +193,6 @@ class Position:
                 my_list.insert(0, element)
             else:
                 break
-        print("Voici la liste depuis la création de la ligne jusqu'à son exécution." + str(my_list))
         if self.sign == "+":
             for element in my_list:
                 if float(element[4]) <= self.price:

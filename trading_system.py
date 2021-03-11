@@ -160,6 +160,7 @@ try:
         position_nb = len(positions)
         print(f"\nVoici le nombre de positions : {position_nb}")
     else:
+        position_nb = 0
         print("\nPas de positions...")
 except TypeError:
     print("\nException levée. Pas de fichier trouvé...")
@@ -186,23 +187,22 @@ print(f"{position_A1.name} : le {position_A1.date} {position_A1.sign} {position_
       f"@{position_A1.price} (PX= {position_A1.px}) [validité jusqu'au {position_A1.deadline}]")
 
 # ------ on vérifie si la position a été exécutée ------
-print("\nOn vérifie si la position a été touchée et on obtient ceci :")
+print("\nOn vérifie si la position a été touchée")
 result = []
 
 # ============ ATTENTION CECI NE VAUT QUE POUR UNE LISTE 'POSITIONS' AVEC UN UNIQUE ELEMENT =============
 
 for position in positions:
     result = position.check_position(PX_datas)
-    print(f"{position.name} : le {position.date} {position.sign} {position.quantity}"
-          f" {position.stock}@{position.price} (PX={position.px}) validité jusqu'au {position.deadline})")
-    print(f"La variable result nous donne : {result}")
+    print(f"Voici le contenu du fichier positions : {result}")
 
     # ------ on vérifie si la position existante est toujours relative au dernier plus haut ------
     if position.sign == "+" and new_higher:
         print("L'ordre d'achat non exécuté va être actualisé pour refléter le nouveau plus haut atteint.")
         position_A1 = Position("A1", string_date, "+", lvc_quantity, "lvc", A1, PX_A1, expiration)
         print(f"La nouvelle position en attente à l'achat est la suivante : "
-              f"{position.name} : le {position.date} {position.sign} {position.quantity}")
+              f"{position_A1.name} : le {position_A1.date} {position_A1.sign} {position_A1.quantity}{position_A1.stock}"
+              f"{position_A1.price} (PX= {position_A1.px}) [validité jusqu'au {position_A1.deadline}]")
 
         # on met à jour l'UNIQUE ELEMENT de la liste 'positions'
         positions[0] = position_A1
@@ -229,7 +229,7 @@ A L'ACHAT :
         +A1 à LAST_HIGH-5%
         +A2 à A1-2%
         +A3 à A2-2%
-2-   IF POSITIONS = 0 AND NEW_HIGH:
+2-   IF POSITIONS == 0 AND NEW_HIGH:
         ANNULATION A1 A2 A3
         +A1 à NEW_HIGH-5%
         +A2 à A1-2%
@@ -240,7 +240,7 @@ A L'ACHAT :
         ON VERIFIE SI LE NIVEAU D'ACHAT EST TOUCHE
 A LA VENTE :
 4-   DES QUE LE COURS EST TOUCHE:
-    IF POSITIONS = 0:
+    IF POSITIONS == 0:
         RETOUR à 1
     IF POSITIONS > 0:
         REPRISE DE LA POSITION SUR NIVEAU ACHAT PRECEDENT
