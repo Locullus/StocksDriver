@@ -1,7 +1,17 @@
 # StocksDriver
 utilisation d'un webdriver pour calculer des prises de positions sur un tracker d'indice.
 
-Une fois le fichier Trading_system.py lancé, le programme va dans un premier temps mettre à jour son fichier de données historiques puis gérer les différentes positions.
-En fonction des niveaux atteints, les positions seront soit soldées, soit ouvertes, soit ajustées à la hausse ou à la baisse.
-Pour l'instant ce programme n'en est qu'à la reconnaissance des niveaux d'interventions, pas encore à la prise de positions autonome - ce qui sera le but final.
-L'objectif intermédiaire est de développer un système d'alerte par courrier électronique qui précisera les niveaux d'interventions.
+Ce programme utilisant le navigateur Chrome de Google en mode automatique, il nécessite au préalable l'installation du ChromeDriver de Selenium sur votre système.
+Vous le trouverez à cette adresse :
+
+  http://chromedriver.storage.googleapis.com/index.html
+
+Une fois installé, ajouter son chemin d'accès au PATH de vos variables d'environnement. Ceci permettra à ChromeDriver de fonctionner en mode automatisé.
+Ne reste plus qu'à installer le package Selenium. Cela peut-être fait simplement en console avec la commande:
+
+  pip install selenium
+
+Pour de plus amples informations sur le fonctionnement de Selenium, vous pouvez vous reportez à la documentation en ligne :
+
+  https://selenium-python.readthedocs.io/
+  
