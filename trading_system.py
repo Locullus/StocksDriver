@@ -201,8 +201,9 @@ for position in positions:
         print("L'ordre d'achat non exécuté va être actualisé pour refléter le nouveau plus haut atteint.")
         position_A1 = Position("A1", string_date, "+", lvc_quantity, "lvc", A1, PX_A1, expiration)
         print(f"La nouvelle position en attente à l'achat est la suivante : "
-              f"{position_A1.name} : le {position_A1.date} {position_A1.sign} {position_A1.quantity}{position_A1.stock}"
-              f"{position_A1.price} (PX= {position_A1.px}) [validité jusqu'au {position_A1.deadline}]")
+              f"{position_A1.name} : le {position_A1.date} {position_A1.sign} {position_A1.quantity} "
+              f"{position_A1.stock} {position_A1.price} (PX= {position_A1.px}) [validité jusqu'au "
+              f"{position_A1.deadline}]")
 
         # on met à jour l'UNIQUE ELEMENT de la liste 'positions'
         positions[0] = position_A1
