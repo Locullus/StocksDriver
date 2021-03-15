@@ -14,6 +14,10 @@ Vous pouvez également visiter celle-ci :
   
   
 Une fois le WebDriver installé, ajoutez son chemin d'accès au PATH de vos variables d'environnement. Ceci permettra à ChromeDriver de fonctionner en mode automatisé.
+Il vous faudra également veiller à indiquer le chemin d'accès au WebDriver que vous venez d'installer à la ligne suivante :
+
+      `with Chrome(executable_path=r"<PATH/TO/YOUR/CHROMEDRIVER.EXE>" options=self.options) as self.driver:`
+      
 Ne reste plus qu'à installer le package Selenium. Cela peut-être fait très simplement en tapant dans console :
 
   pip install selenium
