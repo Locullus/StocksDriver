@@ -22,6 +22,7 @@
 from datetime import date
 from classPosition import WebDriver, Position, get_datas, save_datas,\
     get_higher, buy_limit, reformate_datetime, set_delta
+from sendingMail import sending_mail
 
 # ------ affectation de la valeur et de la date du premier point haut local ------
 MY_LAST_HIGH = 5555.83
@@ -207,6 +208,10 @@ for position in positions:
 
         # on met à jour l'UNIQUE ELEMENT de la liste 'positions'
         positions[0] = position_A1
+
+        # on envoie un mail automatique afin d'avertir de l'évolution de la position
+        sending_mail(positions[0])
+        print("Vérifiez votre boîte mail...")
 
 # ============ ATTENTION CECI NE VAUT QUE POUR UNE LISTE 'POSITIONS' AVEC UN UNIQUE ELEMENT =============
 
