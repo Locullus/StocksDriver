@@ -176,7 +176,7 @@ expiration = reformate_datetime(today, 90)
 print(f"La date d'expiration à 90 jours nous donne le {expiration}")
 
 # ------ on recupère notre objet position, s'il n'existe pas on le crée ------
-lvc_quantity = round(500 / A1)
+lvc_quantity = round(750 / A1)
 if position_nb == 0:
     position_A1 = Position("A1", string_date, "+", lvc_quantity, "lvc", A1, PX_A1, expiration)
     positions.append(position_A1)
