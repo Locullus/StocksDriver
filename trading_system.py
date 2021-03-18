@@ -210,7 +210,8 @@ for position in positions:
         positions[0] = position_A1
 
         # on envoie un mail automatique afin d'avertir de l'évolution de la position
-        sending_mail(positions[0])
+        sending_mail(position_A1.name, position_A1.date, position_A1.sign, position_A1.quantity, position_A1.stock,
+                     position_A1.price, position_A1.px, position_A1.deadline)
         print("Vérifiez votre boîte mail...")
 
 # ============ ATTENTION CECI NE VAUT QUE POUR UNE LISTE 'POSITIONS' AVEC UN UNIQUE ELEMENT =============
