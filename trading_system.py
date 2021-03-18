@@ -206,10 +206,10 @@ for position in positions:
               f"{position_A1.stock} {position_A1.price} (PX= {position_A1.px}) [validité jusqu'au "
               f"{position_A1.deadline}]")
 
-        # on met à jour l'UNIQUE ELEMENT de la liste 'positions'
+        # ------ on met à jour l'UNIQUE ELEMENT de la liste 'positions' ------
         positions[0] = position_A1
 
-        # on envoie un mail automatique afin d'avertir de l'évolution de la position
+        # ------ on envoie un mail automatique afin d'avertir de l'évolution de la position ------
         sending_mail(position_A1.name, position_A1.date, position_A1.sign, position_A1.quantity, position_A1.stock,
                      position_A1.price, position_A1.px, position_A1.deadline)
         print("Vérifiez votre boîte mail...")
