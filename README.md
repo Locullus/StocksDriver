@@ -9,7 +9,7 @@ Vous la trouverez à cette adresse :
   
 Pour remplacer une version par une autre, décompressez votre fichier directement dans le répertoire d'origine du téléchargement précédent. Le nouveau fichier remplacera automatiquement l'ancien devenu inutile.
 
-Vous pouvez également visiter celle-ci :
+Vous pouvez également visiter cette adresse :
   http://chromedriver.storage.googleapis.com/index.html
   
   
