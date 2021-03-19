@@ -49,8 +49,7 @@ PX_datas = get_datas("PX-datas", PX_datas)
 try:
     if len(PX_datas) > 0:
         last_saved_date = PX_datas[0][0]
-        print("Voici le fichier sauvegardé : " + str(PX_datas))
-        print("La liste contient : " + str(len(PX_datas)) + " éléments.")
+        print("Le fichier de sauvegarde contient : " + str(len(PX_datas)) + " éléments.")
     else:
         print("Aucune donnée sauvegardée. Le fichier est vide.")
 except TypeError:
@@ -97,8 +96,8 @@ lvc_high = WebDriver(lvc_url, lvc_x_path, 4, 6)
 lvc_low = WebDriver(lvc_url, lvc_x_path, 5, 6)
 high_lvc = float(lvc_high.datas)
 low_lvc = float(lvc_low.datas)
-print(f"Les dernières valeurs disponibles du cac : {high_cac} et du lvc : {high_lvc}")
-print(f"Le plus bas du lvc ce même jour est à {low_lvc} et le plus bas du cac est {low_cac}")
+print(f"Les dernières valeurs disponibles du cac : plus haut {high_cac}, plus bas {low_lvc} ; "
+      f"pour le  lvc : plus haut {high_lvc}, plus bas {low_cac}.")
 lvc_datas = (high_lvc, low_lvc, high_cac, low_cac)
 save_datas("lvc_datas", lvc_datas)
 
@@ -108,8 +107,8 @@ for each_element in investing_datas:
     PX_datas.insert(index, each_element)
     index += 1
 save_datas("PX-datas", PX_datas)
-print("\nFusion des listes réalisées : la sauvegarde a été actualisée.")
-print("La liste contient désormais " + str(len(PX_datas)) + " éléments.")
+print("\nFusion des listes réalisées : la sauvegarde a été actualisée. "
+      "La liste contient désormais " + str(len(PX_datas)) + " éléments.")
 print("FIN DU SCRAPING !!!")
 print("\nLe dernier plus haut local valait " + str(MY_LAST_HIGH) + " points à la date du " + MY_LAST_DATE)
 
