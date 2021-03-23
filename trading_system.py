@@ -222,6 +222,16 @@ save_datas("positions", positions)
 quit()
 
 """
+    ====================================================================================
+Issue line 178 : 
+Traceback (most recent call last):
+  File "I:/fichiers mika/Documents Python/back_up_stocks_webscraper/trading_system.py", line 178, in <module>
+    lvc_quantity = round(750 / A1)
+ZeroDivisionError: float division by zero
+Cette erreur intervient au chargement des données avant l'ouverture. Je pense que la valeur assignée au lvc = 0.
+Il faut donc ajouter une instruction pour capter cette exception avec un bloc try
+    =====================================================================================
+
 L'idée est de traquer l'indice de référence pour se placer à l'achat dès qu'il perd 5%.
 L'objectif de revente est à +5%.
 Quand une ligne est prise, les ordres suivants se situent 2% plus bas.
