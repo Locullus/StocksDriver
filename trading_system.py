@@ -228,7 +228,7 @@ Traceback (most recent call last):
   File "I:/fichiers mika/Documents Python/back_up_stocks_webscraper/trading_system.py", line 178, in <module>
     lvc_quantity = round(750 / A1)
 ZeroDivisionError: float division by zero
-Cette erreur intervient au chargement des données avant l'ouverture. Je pense que la valeur assignée au lvc = 0.
+Cette erreur intervient au chargement des données avant l'ouverture. La valeur assignée au lvc = 0.
 Il faut donc ajouter une instruction pour capter cette exception avec un bloc try
     =====================================================================================
 
