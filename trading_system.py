@@ -33,7 +33,7 @@ new_higher = False
 # ===============================================================================================
 # une alternative pour scraper les cours du lvc via le site d'Euronext :
 #
-# pour le lvc : https://live.euronext.com/en/product/etfs/fr0010592014-xpar/lyxor-etf-lev-cac/lvc
+# le lvc : https://live.euronext.com/en/product/etfs/fr0010592014-xpar/lyxor-etf-lev-cac/lvc
 #
 # idem pour le CAC : https://live.euronext.com/en/product/indices/FR0003500008-XPAR
 #
