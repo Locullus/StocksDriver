@@ -30,6 +30,15 @@ MY_LAST_DATE = "23/11/2020"
 last_saved_date = "0"
 new_higher = False
 
+# ===============================================================================================
+# une alternative pour scraper les cours du lvc via le site d'Euronext :
+#
+# pour le lvc : https://live.euronext.com/en/product/etfs/fr0010592014-xpar/lyxor-etf-lev-cac/lvc
+#
+# idem pour le CAC : https://live.euronext.com/en/product/indices/FR0003500008-XPAR
+#
+# ===============================================================================================
+
 # ------ déclaration des url des xpath des données à scraper ------
 cac_url = 'https://www.boursorama.com/bourse/indices/cours/1rPCAC/'
 cac_x_path = '//*[@id="main-content"]/div/section[1]/div[2]/article/div[1]/div[2]/div[1]/div[5]/' \
