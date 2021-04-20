@@ -240,6 +240,13 @@ ZeroDivisionError: float division by zero
 Cette erreur intervient au chargement des données avant l'ouverture. La valeur assignée au lvc = 0.
 Il faut donc ajouter une instruction pour capter cette exception avec un bloc try
     =====================================================================================
+    
+    =====================================================================================
+    l.211 : il serait plus judicieux de donner en paramètre un objet rassemblant toutes les caractéristiques
+    plutôt que d'envoyer toute une série de paramètres pour chaque caractéristique particulière.
+    Dans la classe, il faut alors voir s'il est possible de faire par exemple ceci:
+    self.name = Object.name, où Object est l'objet 'position' de la liste sauvegardée
+    =====================================================================================
 
 L'idée est de traquer l'indice de référence pour se placer à l'achat dès qu'il perd 5%.
 L'objectif de revente est à +5%.
