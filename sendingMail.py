@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def sending_mail(name, date, sign, quantity, stock, price, px, deadline):
+def sending_mail(position):
     """Fonction qui envoie un mail d'alerte automatique
 
         Args :
@@ -28,7 +28,8 @@ def sending_mail(name, date, sign, quantity, stock, price, px, deadline):
     message = f"""Subject: Email from StocksDriver\n\n    
 
     Verifier vos positions. La derniere position en date est la suivante : 
-    {name} : le {date} {sign} {quantity} {stock} {price} (PX= {px}) [validite jusqu'au {deadline}]
+    {position.name} : le {position.date} {position.sign} {position.quantity} {position.stock} {position.price} \
+    (PX= {position.px}) [validite jusqu'au {position.deadline}]
 
     This message is sent from Python."""
 
