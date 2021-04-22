@@ -14,10 +14,10 @@ def sending_mail(position):
     """Fonction qui envoie un mail d'alerte automatique
 
         Args :
-        elle prend en argument la position à actualiser
+        elle prend en argument un objet qui est la position à actualiser
 
         Return :
-        ne retourne rien, se contente d'expédier le mail
+        ne retourne rien, se contente d'expédier le mail en appelant les différents attribut de l'objet
     """
 
     port = 465  # For SSL
