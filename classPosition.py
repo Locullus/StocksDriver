@@ -190,11 +190,18 @@ class Position:
     def check_position(self, list_data):
         """fonction qui vérifie si une position a été exécutée"""
         my_list = []
+
+        # dans un premier temps on récupère dans une liste toutes les données disponibles depuis le dernier ordre passé
+        # la liste est classée dans l'ordre chronologique
+        # on sort de la boucle dès que la date du dernier ordre est rencontrée
         for element in list_data:
             if element[0] != self.date:
                 my_list.insert(0, element)
             else:
                 break
+
+        # dans un second temps on vérifie si prix de l'élément de liste précèdente <= prix de la position pour 2 cas :
+        # cas 1 : la position attend d'être passée
         if self.sign == "+":
             for element in my_list:
                 if float(element[4]) <= self.price:
@@ -208,6 +215,8 @@ class Position:
                         self.name, self.date, self.sign, self.quantity, self.stock, self.price, self.px, self.deadline
             print("La position n'a pas encore été prise.")
             return self.name, self.date, self.sign, self.quantity, self.stock, self.price, self.px, self.deadline
+
+        # cas 2 : la position attend d'être soldée
         if self.sign == "-":
             for element in my_list:
                 if float(element[4]) >= self.price:
