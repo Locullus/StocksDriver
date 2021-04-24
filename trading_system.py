@@ -184,6 +184,8 @@ expiration = reformate_datetime(today, 90)
 print(f"La date d'expiration à 90 jours nous donne le {expiration}")
 
 # ------ on recupère notre objet position, s'il n'existe pas on le crée ------
+# TODO : ZeroDivisionError: float division by zero => ATTENTION : près de l'heure d'ouverture LVC = 0
+# TODO : on peut gérer cette erreur avec un message demandant d'attendre l'ouverture du marché pour lancer l'appli
 lvc_quantity = round(750 / A1)
 if position_nb == 0:
     position_A1 = Position("A1", string_date, "+", lvc_quantity, "lvc", A1, PX_A1, expiration)
@@ -208,6 +210,19 @@ for position in positions:
     # ------ on vérifie si la position existante est toujours relative au dernier plus haut ------
     if position.sign == "+" and new_higher:
         print("L'ordre d'achat non exécuté va être actualisé pour refléter le nouveau plus haut atteint.")
+
+        # TODO : il faudrait créer un objet 'Position' avec tous les attributs plutôt que les envoyer un à un
+        ma_position_test = {
+            "name": "A1",
+            "date": string_date,
+            "sign": "+",
+            "quantity": lvc_quantity,
+            "stock": "lvc",
+            "price": A1,
+            "px": PX_A1,
+            "deadline": expiration
+        }
+        # TODO: ensuite passer ce dictionnaire ou cet objet en paramètre puis faire self.name = args.name par exemple
         position_A1 = Position("A1", string_date, "+", lvc_quantity, "lvc", A1, PX_A1, expiration)
         print(f"La nouvelle position en attente à l'achat est la suivante : "
               f"{position_A1.name} : le {position_A1.date} {position_A1.sign} {position_A1.quantity} "
@@ -229,24 +244,7 @@ save_datas("positions", positions)
 
 quit()
 
-"""
-    ====================================================================================
-Issue line 178 : 
-Traceback (most recent call last):
-  File "I:/fichiers mika/Documents Python/back_up_stocks_webscraper/trading_system.py", line 178, in <module>
-    lvc_quantity = round(750 / A1)
-ZeroDivisionError: float division by zero
-Cette erreur intervient au chargement des données avant l'ouverture. La valeur assignée au lvc = 0.
-Il faut donc ajouter une instruction pour capter cette exception avec un bloc try
-    =====================================================================================
-    
-    =====================================================================================
-    l.211 : il serait plus judicieux de donner en paramètre un objet rassemblant toutes les caractéristiques
-    plutôt que d'envoyer toute une série de paramètres pour chaque caractéristique particulière.
-    Dans la classe, il faut alors voir s'il est possible de faire par exemple ceci:
-    self.name = Object.name, où Object est l'objet 'position' de la liste sauvegardée
-    =====================================================================================
-    
+"""    
     =====================================================================================
     Il faut calculer les positions depuis un nouveau plus haut pour trois lignes (A1, A2, A3)
     Il faut aussi calculer l'objectif de revente à PX+5% pour chaque ligne passée
