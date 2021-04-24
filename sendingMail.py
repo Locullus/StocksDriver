@@ -37,3 +37,10 @@ def sending_mail(position):
     with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, message)
+
+
+"""
+La prochaine fonctionnalité consistera à gérer une liste d'objets en argument plutôt qu'un unique objet.
+Ceci permettra de recevoir plusieurs positions, ce qui à terme est l'objectif.
+Il suffira pour cela de créer une boucle.
+"""
