@@ -162,14 +162,14 @@ print("\nLe premier niveau d'achat se situe à " + str(PX_A1) + " points, ce qui
 
 # ------ récupération des instances enregistrées de la classe Position ------
 positions = []
-position_nb = 0
+position_length = 0
 positions = get_datas("positions", positions)
 try:
     if len(positions) > 0:
-        position_nb = len(positions)
-        print(f"\nVoici le nombre de positions : {position_nb}")
+        position_length = len(positions)
+        print(f"\nVoici le nombre de positions : {position_length}")
     else:
-        position_nb = 0
+        position_length = 0
         print("\nPas de positions...")
 except TypeError:
     print("\nException levée. Pas de fichier trouvé...")
@@ -187,7 +187,7 @@ print(f"La date d'expiration à 90 jours nous donne le {expiration}")
 # TODO : ZeroDivisionError: float division by zero => ATTENTION : près de l'heure d'ouverture LVC = 0
 # TODO : on peut gérer cette erreur avec un message demandant d'attendre l'ouverture du marché pour lancer l'appli
 lvc_quantity = round(750 / A1)
-if position_nb == 0:
+if position_length == 0:
     position_A1 = Position("A1", string_date, "+", lvc_quantity, "lvc", A1, PX_A1, expiration)
     positions.append(position_A1)
 else:
