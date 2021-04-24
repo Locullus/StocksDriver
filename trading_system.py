@@ -248,10 +248,16 @@ Il faut donc ajouter une instruction pour capter cette exception avec un bloc tr
     =====================================================================================
     
     =====================================================================================
-    Il faut calculer les positions depuis un nouvezau plus haut pour trois lignes (A1, A2, A3)
+    Il faut calculer les positions depuis un nouveau plus haut pour trois lignes (A1, A2, A3)
     Il faut aussi calculer l'objectif de revente à PX+5% pour chaque ligne passée
     =====================================================================================
-
+    
+    =====================================================================================
+    Le programme nécessitant un web Driver à jour pour fonctionner, il faut implémenter une
+    gestion de l'exception levée lorsqu'une mise à jour est requise et la télecharger automatiquement
+    =====================================================================================
+    
+    ================================== ALGORITHME =======================================
 L'idée est de traquer l'indice de référence pour se placer à l'achat dès qu'il perd 5%.
 L'objectif de revente est à +5%.
 Quand une ligne est prise, les ordres suivants se situent 2% plus bas.
