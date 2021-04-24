@@ -257,6 +257,11 @@ Il faut donc ajouter une instruction pour capter cette exception avec un bloc tr
     gestion de l'exception levée lorsqu'une mise à jour est requise et la télecharger automatiquement
     =====================================================================================
     
+    =====================================================================================
+    Développement de l'application avec une interface utilisateur avec Flask dans un premier temps.
+    Transformation du fichier de sauvegarde en système de base de données et ajout de fichiers html.
+    =====================================================================================
+    
     ================================== ALGORITHME =======================================
 L'idée est de traquer l'indice de référence pour se placer à l'achat dès qu'il perd 5%.
 L'objectif de revente est à +5%.
