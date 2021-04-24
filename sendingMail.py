@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def sending_mail(position):
+def sending_mail(list_position):
     """Fonction qui envoie un mail d'alerte automatique
 
         Args :
@@ -25,11 +25,28 @@ def sending_mail(position):
     sender_email = os.getenv("SENDER_EMAIL")
     receiver_email = os.getenv("RECEIVER_EMAIL")
     password = os.getenv("PASSWORD")
+
+    # on crée une boucle pour récupérer toutes les positions existantes et on en fait le rendu dans une variable render
+    # on ajoute également un peu de logique conditionnelle pour personnaliser l'affichage.
+    # Comme il n'est pas possible d'injecter de la logique dans le rendu triple quotes ("""), j'opte pour render()
+    # que j'utilise comme un rendu commun de template (React-like)
+    render = []
+    for position in list_position:
+        if position.sign == "+":
+            direction = "achat"
+        else:
+            direction = "vente"
+
+        render.append(f"{position.name} : le {position.date} dans le sens {direction} {position.quantity} \
+{position.stock} {position.price} (PX= {position.px}) [validite jusqu'au {position.deadline}]")
+    render = "\n".join(render)
+
     message = f"""Subject: Email from StocksDriver\n\n    
 
-    Verifier vos positions. La derniere position en date est la suivante : 
-    {position.name} : le {position.date} {position.sign} {position.quantity} {position.stock} {position.price} \
-    (PX= {position.px}) [validite jusqu'au {position.deadline}]
+    Verifiez vos positions.\n
+    Voici le contenu du fichier 'positions' : \n
+    
+    {render}
 
     This message is sent from Python."""
 
@@ -38,9 +55,4 @@ def sending_mail(position):
         server.login(sender_email, password)
         server.sendmail(sender_email, receiver_email, message)
 
-
-"""
-La prochaine fonctionnalité consistera à gérer une liste d'objets en argument plutôt qu'un unique objet.
-Ceci permettra de recevoir plusieurs positions, ce qui à terme est l'objectif.
-Il suffira pour cela de créer une boucle.
-"""
+# TODO : vérifier l'affichage des positions multiples lorsqu'elles auront été envoyées au fichier positions
