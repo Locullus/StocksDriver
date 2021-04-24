@@ -102,6 +102,8 @@ class WebDriver:
         self.options.page_load_strategy = 'normal'
 
         # ATTENTION : l'argument 'executable_path' doit pointer vers l'exécutable du webdriver installé
+        # TODO : il faudra insérer ce gestionnaire de contexte dans un bloc try lorsqu'on connaîtra l'exception levée
+        # TODO : on créera alors une fonction pour la mise à jour du ChromeDriver puis une relance de celui-ci
         with Chrome(executable_path=r"C:\Users\bin\chromedriver.exe", options=self.options) as self.driver:
             if self.loop == "loop":
                 try:
