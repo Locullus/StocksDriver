@@ -257,9 +257,14 @@ quit()
     
     =====================================================================================
     Développement de l'application avec une interface utilisateur avec Flask dans un premier temps.
-    Transformation du fichier de sauvegarde en système de base de données et ajout de fichiers html.
+    Transformation du fichier de sauvegarde en système de base de données et ajout de fichiers html.    
+    Une fois en ligne, l'appli devra se connecter au marché après la fermeture de celui-ci pour
+    récupérer les dernières données qu'elle conservera dans une base de données.
+    Elle opérera alors un contrôle des positions et les ajustera en fonction des données recueillies.
+    Un mail sera envoyé quotidiennement pour avertir des changements ou non dans les positions.
+    A terme, elle se connectera au broker pour passer les ordres nécessaires automatiquement.
     =====================================================================================
-    
+        
     ================================== ALGORITHME =======================================
 L'idée est de traquer l'indice de référence pour se placer à l'achat dès qu'il perd 5%.
 L'objectif de revente est à +5%.
