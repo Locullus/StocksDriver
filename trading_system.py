@@ -267,14 +267,14 @@ quit()
     
     =====================================================================================
     en début de script ajouter ceci (shabang) pour qu'il soit reconnu comme tel par le serveur :
-    #! <chemin d'accès au fichier>
+    #!/usr/bin/env python3 => cette commande pour Unix recherche l'éxecutable Python à l'aide de la commande env
     
     en fin de script ajouter ceci :
     if __name__ == "__main__":
         main()
     =====================================================================================
-    
-    
+    On pourra ajouter un Cron depuis le serveur pour planifier une exécution automatique quotidienne.
+    Cf https://faq.o2switch.fr/hebergement-mutualise/tutoriels-cpanel/taches-cron
         
     ================================== ALGORITHME =======================================
 L'idée est de traquer l'indice de référence pour se placer à l'achat dès qu'il perd 5%.
