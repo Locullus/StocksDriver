@@ -264,6 +264,17 @@ quit()
     Un mail sera envoyé quotidiennement pour avertir des changements ou non dans les positions.
     A terme, elle se connectera au broker pour passer les ordres nécessaires automatiquement.
     =====================================================================================
+    
+    =====================================================================================
+    en début de script ajouter ceci (shabang) pour qu'il soit reconnu comme tel par le serveur :
+    #! <chemin d'accès au fichier>
+    
+    en fin de script ajouter ceci :
+    if __name__ == "__main__":
+        main()
+    =====================================================================================
+    
+    
         
     ================================== ALGORITHME =======================================
 L'idée est de traquer l'indice de référence pour se placer à l'achat dès qu'il perd 5%.
