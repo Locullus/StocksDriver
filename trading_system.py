@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
     Ce programme de trading récupère les dernières données disponibles sur le net pour construire un historique
     du CAC et déterminer les niveaux d'interventions à l'achat et la vente sur un tracker du CAC, le LVC.
