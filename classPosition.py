@@ -33,8 +33,7 @@ def get_higher(data):
         maxi = [element[3] for element in data]  # liste pour récupérer tous les plus hauts quotidiens à l'index[3]
         if len(maxi) != 0:
             return max(maxi)  # on retourne le plus haut
-        else:
-            return "Pas de nouveau plus haut identifié."
+        return "Pas de nouveau plus haut identifié."
     except NameError:
         return "Exception levée : la liste est peut-être vide !"
 
