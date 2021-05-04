@@ -83,7 +83,11 @@ except TypeError:
 # ------ mise à jour des dernières données du cac disponibles sur Investing ------
 print("\nChargement du webDriver pour récupérer les dernières données...")
 investing = WebDriver(loop_url, loop_x_path, 1, 1, loop="loop", last_saved_date=last_saved_date)
-investing_datas = investing.datas
+try:
+    investing_datas = investing.datas
+except AttributeError:
+    print("Aucune données disponibles. Le problème pourrait venir du site lui-même ou de l'horaire...")
+    investing_datas = None
 print("Les données scrapées sur le site d'Investing : " + str(investing_datas))
 
 # ------ on vérifie si un nouveau plus haut a été réalisé ------
