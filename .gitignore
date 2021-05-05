@@ -2,6 +2,8 @@
 
 # les données sensibles sont stockées dans les variables d'environnements. A TOUJOURS INGNORER
 /.env
+.idea/
+__pycache__/
 
 # fichiers abandonnés durant le développement
 /buy_limit
