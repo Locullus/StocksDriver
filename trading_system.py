@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 """
     Ce programme de trading récupère les dernières données disponibles sur le net pour construire un historique
@@ -22,7 +23,7 @@
 
 # ------ importation des modules ------
 from datetime import date
-from classPosition import WebDriver, Position, get_datas, save_datas,\
+from classPosition import WebDriver, Position, get_datas, save_datas, \
     get_higher, buy_limit, reformate_datetime, set_delta
 from sendingMail import sending_mail
 
@@ -244,7 +245,7 @@ for position in positions:
 
 # ============ ATTENTION CECI NE VAUT QUE POUR UNE LISTE 'POSITIONS' AVEC UN UNIQUE ELEMENT =============
 
-    # ------ sauvegarde du fichier positions ------
+# ------ sauvegarde du fichier positions ------
 print("Le fichier 'positions' a été sauvegardé.")
 save_datas("positions", positions)
 
