@@ -18,7 +18,7 @@ Il vous faudra également veiller à indiquer le chemin d'accès au WebDriver qu
 
       `with Chrome(executable_path=r"<PATH/TO/YOUR/CHROMEDRIVER.EXE>" options=self.options) as self.driver:`
       
-Ne reste plus qu'à installer le package Selenium. Cela peut-être fait très simplement en tapant dans console :
+Ne reste plus qu'à installer le package Selenium. Cela peut-être fait très simplement en tapant dans la console :
 
   pip install selenium
 
