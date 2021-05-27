@@ -8,9 +8,3 @@ __pycache__/
 # fichiers abandonnés durant le développement
 /buy_limit
 /positions
-/back_up_2.txt
-/back_up_branch_one_webDriver.txt
-/guess_number.py
-/methods_from_class_Position.txt
-/XPATH_RSI_CAC.txt
-/test.py
