@@ -289,6 +289,8 @@ L'objectif de revente est à +5%.
 Quand une ligne est prise, les ordres suivants se situent 2% plus bas.
 Jusqu'à ce qu'il ne reste qu'une seule position, toutes les positions vendues seront reprises à -5%.
 Quand toutes les lignes sont vendues, on recommence en traquant un nouveau plus haut sur l'indice pour acheter à -5%.
+
+NOTE : LAST_HIGH est définit au moment de la vente de la dernière ligne et la première ligne est définit à LASH_HIGH-5%.
         
 L'algorithme est le suivant :
 
