@@ -223,3 +223,10 @@ class Position:
                 if float(element[4]) >= self.price:
                     print(f"La position a été soldée sur le cours de {element[4]} au prix de {self.price}.")
                 print("La position n'a pas encore été soldée.")
+
+
+"""
+selenium.common.exceptions.SessionNotCreatedException: Message: session not created: 
+This version of ChromeDriver only supports Chrome version 89
+Current browser version is 91.0.4472.77 with binary path C:\Program Files (x86)\Google\Chrome\Application\chrome.exe
+"""
