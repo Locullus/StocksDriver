@@ -230,4 +230,12 @@ selenium.common.exceptions.SessionNotCreatedException: Message: session not crea
 This version of ChromeDriver only supports Chrome version 89
 Current browser version is 91.0.4472.77 with binary path C:
 \\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe
+
+Lors de la levée de cette exception il faut charger le chrome driver correspondant à la version de Chrome.
+Le chromedriver peut être chargé à cette adresse : "https://chromedriver.chromium.org/"
+Il faut sélectionner la dernière version stable et la sauvegarder ici : "C:/Users/bin/chromedriver.exe"
+
+On pourra automatiser ce processus en utilisant selenium et le xpath de cette version stable.
+Il faudra créer une fonction qui se connectera à l'adresse et installera le nouveau driver pour ensuite relancer
+le programme une fois l'exception gérée.
 """
