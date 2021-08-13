@@ -110,7 +110,7 @@ class WebDriver:
                     self.driver.implicitly_wait(2)
                     self.datas = self.parsing_method()
                 except WebDriverException:
-                    print("Problème avec le WebDriver, vérifiez la connnexion.")
+                    print("Problème avec le WebDriver, vérifiez la connnection.")
             else:
                 try:
                     self.driver.get(self.url)
