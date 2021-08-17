@@ -110,14 +110,14 @@ class WebDriver:
                     self.driver.implicitly_wait(2)
                     self.datas = self.parsing_method()
                 except WebDriverException:
-                    print("Problème avec le WebDriver, vérifiez la connnection.")
+                    print("Problème avec le WebDriver, vérifiez la connection.")
             else:
                 try:
                     self.driver.get(self.url)
                     self.driver.implicitly_wait(2)
                     self.datas = self.parse_array(self.x_path, self.index1, self.index2)
                 except WebDriverException:
-                    print("Problème avec le WebDriver, vérifiez le chemin vers l'exécutable ou votre connnexion.")
+                    print("Problème avec le WebDriver, vérifiez le chemin vers l'exécutable ou votre connection.")
 
     def parsing_method(self):
         """ fonction qui détermine le nombre de lignes à scraper et la boucle utilisée """
