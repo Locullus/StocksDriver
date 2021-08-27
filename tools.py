@@ -1,3 +1,7 @@
+"""
+ici sont rassemblées toutes les fonctions utilitaires
+"""
+
 import re
 import requests
 from requests_html import HTMLSession
@@ -87,6 +91,8 @@ def set_delta(high_cac, MY_LAST_HIGH, high_lvc):
 
 
 def driver_update():
+    """fonction qui met à jour le chromedriver en lien avec la version du navigateur"""
+
     # on vérifie le numéro de version de chrome
     options = Options()
     options.headless = True
@@ -127,13 +133,13 @@ def driver_update():
     # on extrait le href de l'élément précédent
     url = url.absolute_links
 
-    # on convertit le set result en liste pour en extraire le premier élément
+    # on convertit le set 'result' en liste pour en extraire le premier élément
     url = list(url)[0]
     print(
         f"l'url de téléchargement est {url}"
     )  # https://chromedriver.storage.googleapis.com/93.0.4577.15/chromedriver_win32.zip
 
-    # on télécharge le fichier distant
+    # on fait une requête vers le fichier distant
     response = session.get(url)
 
     # on enregistre localement l'archive zippée
