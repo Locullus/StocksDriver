@@ -22,7 +22,6 @@ class WebDriver:
         self.options.headless = True
         self.options.page_load_strategy = 'normal'
 
-        # ATTENTION : l'argument 'executable_path' doit pointer vers l'exécutable du webdriver installé
         # TODO : il faudra peut-être effacer le fichier chromedriver lors d'une mise à jour pour éviter les conflits
         # TODO : on pourrait commencer par la vérification du  numéro de version avant de lancer le webdriver
         try:
@@ -38,6 +37,8 @@ class WebDriver:
                         self.datas = self.parse_array(self.x_path, self.index1, self.index2)
                 except WebDriverException:
                     print("Problème avec le WebDriver, vérifiez la connection.")
+
+        # si le chromedriver est obsolète on gère l'exception en lançant une mise à jour
         except SessionNotCreatedException:
             driver_update()
             with Chrome(executable_path=r"C:\Users\bin\chromedriver.exe", options=self.options) as self.driver:
@@ -157,19 +158,3 @@ class Position:
                 if float(element[4]) >= self.price:
                     print(f"La position a été soldée sur le cours de {element[4]} au prix de {self.price}.")
                 print("La position n'a pas encore été soldée.")
-
-
-"""
-selenium.common.exceptions.SessionNotCreatedException: Message: session not created: 
-This version of ChromeDriver only supports Chrome version 89
-Current browser version is 91.0.4472.77 with binary path C:
-\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe
-
-Lors de la levée de cette exception il faut charger le chrome driver correspondant à la version de Chrome.
-Le chromedriver peut être chargé à cette adresse : "https://chromedriver.chromium.org/"
-Il faut sélectionner la dernière version stable et la sauvegarder ici : "C:/Users/bin/chromedriver.exe"
-
-On pourra automatiser ce processus en utilisant selenium et le xpath de cette version stable.
-Il faudra créer une fonction qui se connectera à l'adresse et installera le nouveau driver pour ensuite relancer
-le programme une fois l'exception gérée.
-"""
