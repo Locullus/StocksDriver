@@ -104,20 +104,17 @@ class WebDriver:
         # TODO : il faudra insérer ce gestionnaire de contexte dans un bloc try lorsqu'on connaîtra l'exception levée
         # TODO : on créera alors une fonction pour la mise à jour du ChromeDriver puis une relance de celui-ci
         with Chrome(executable_path=r"C:\Users\bin\chromedriver.exe", options=self.options) as self.driver:
-            if self.loop == "loop":
-                try:
+            try:
+                if self.loop == "loop":
                     self.driver.get(self.url)
                     self.driver.implicitly_wait(2)
                     self.datas = self.parsing_method()
-                except WebDriverException:
-                    print("Problème avec le WebDriver, vérifiez la connection.")
-            else:
-                try:
+                else:
                     self.driver.get(self.url)
                     self.driver.implicitly_wait(2)
                     self.datas = self.parse_array(self.x_path, self.index1, self.index2)
-                except WebDriverException:
-                    print("Problème avec le WebDriver, vérifiez le chemin vers l'exécutable ou votre connection.")
+            except WebDriverException:
+                print("Problème avec le WebDriver, vérifiez la connection.")
 
     def parsing_method(self):
         """ fonction qui détermine le nombre de lignes à scraper et la boucle utilisée """
