@@ -23,8 +23,8 @@
 
 # ------ importation des modules ------
 from datetime import date
-from classPosition import WebDriver, Position, get_datas, save_datas, \
-    get_higher, buy_limit, reformate_datetime, set_delta
+from classPosition import WebDriver, Position
+from tools import get_datas, save_datas, get_higher, buy_limit, reformate_datetime, set_delta
 from sendingMail import sending_mail
 
 # ------ affectation de la valeur et de la date du premier point haut local ------
@@ -42,7 +42,7 @@ new_higher = False
 #
 # ===============================================================================================
 
-# ------ déclaration des url des xpath des données à scraper ------
+# ------ déclaration des xpath à scraper ------
 cac_url = 'https://www.boursorama.com/bourse/indices/cours/1rPCAC/'
 cac_x_path = '//*[@id="main-content"]/div/section[1]/div[2]/article/div[1]/div[2]/div[1]/div[5]/' \
              'div[2]/div[1]/div/div/table/tbody/tr[{}]/td[{}]'

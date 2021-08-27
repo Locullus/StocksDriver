@@ -1,88 +1,10 @@
-"""Ici sont réunies toutes les classes et fonctions utiles au programme principal"""
+"""fichier contenant les classes nécessaires au fonctionnement du programme principal"""
 
-import pickle
-from datetime import date, timedelta
-from selenium.common.exceptions import WebDriverException, NoSuchElementException
+from selenium.common.exceptions import WebDriverException, NoSuchElementException, SessionNotCreatedException
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 
-
-# ------ quelques fonctions statiques ------
-def get_datas(my_file, data):
-    """ fonction qui récupère les données d'un fichier s'il existe et qui le crée sinon """
-    try:
-        with open(my_file, "rb") as file:
-            get_data = pickle.Unpickler(file)
-            result = get_data.load()
-            return result
-    except (FileNotFoundError, EOFError):   # EOFError concerne les fichiers existants mais vides
-        save_datas(my_file, data)
-
-
-def save_datas(my_file, data):
-    """ fonction qui enregistre les données dans un fichier externe """
-    with open(my_file, "wb") as file:
-        write_data = pickle.Pickler(file)
-        write_data.dump(data)
-        return data
-
-
-def get_higher(data):
-    """ retour du plus haut d'une liste de listes si elle n'est pas vide, sinon plus haut de l'historique """
-    try:
-        maxi = [element[3] for element in data]  # liste pour récupérer tous les plus hauts quotidiens à l'index[3]
-        if len(maxi) != 0:
-            return max(maxi)  # on retourne le plus haut
-        return "Pas de nouveau plus haut identifié."
-    except NameError:
-        return "Exception levée : la liste est peut-être vide !"
-
-
-def reformate_data(data):
-    """ reformatage des données et conversion du type string vers float """
-    return float(data.replace(".", "").replace(",", "."))
-
-
-def buy_limit(value, target, leverage):
-    """fonction qui calcule un objectif cible en pourcentage ajusté d'un levier"""
-    return round(value - (((value * target) / 100) * leverage), 2)
-
-
-def reformate_datetime(data, deadline=None):
-    """fonction qui renvoie les dates dans un format unique"""
-    if isinstance(data, date):
-        if deadline is not None:
-            data = data + timedelta(days=deadline)
-        my_month = data.month
-        my_day = data.day
-        if my_month < 10:
-            my_month = f"0{my_month}"
-        if my_day < 10:
-            my_day = f"0{my_day}"
-        return f"{my_day}/{my_month}/{data.year}"
-    if isinstance(data, str):
-        data = data.split("/")
-        date_object = date(int(data[2]), int(data[1]), int(data[0]))
-        if deadline is not None:
-            date_object = date_object + timedelta(days=deadline)
-        my_month = date_object.month
-        my_day = date_object.day
-        if my_month < 10:
-            my_month = f"0{my_month}"
-        if my_day < 10:
-            my_day = f"0{my_day}"
-        return f"{my_day}/{my_month}/{date_object.year}"
-
-
-def set_delta(high_cac, MY_LAST_HIGH, high_lvc):
-    """fonction qui calcule le prix d'un actif à effet de levier par rapport à son sous-jacent"""
-    if high_cac > MY_LAST_HIGH:
-        delta = abs(((MY_LAST_HIGH * 100) / high_cac) - 100) * 2
-        lvc = high_lvc - ((high_lvc * delta) / 100)
-    else:
-        delta = abs(((high_cac * 100) / MY_LAST_HIGH) - 100) * 2
-        lvc = abs(high_lvc + ((high_lvc * delta) / 100))
-    return lvc
+from tools import reformate_data, reformate_datetime, driver_update
 
 
 # ------ configuration de la classe WebDriver ------
@@ -101,20 +23,35 @@ class WebDriver:
         self.options.page_load_strategy = 'normal'
 
         # ATTENTION : l'argument 'executable_path' doit pointer vers l'exécutable du webdriver installé
-        # TODO : il faudra insérer ce gestionnaire de contexte dans un bloc try lorsqu'on connaîtra l'exception levée
-        # TODO : on créera alors une fonction pour la mise à jour du ChromeDriver puis une relance de celui-ci
-        with Chrome(executable_path=r"C:\Users\bin\chromedriver.exe", options=self.options) as self.driver:
-            try:
-                if self.loop == "loop":
-                    self.driver.get(self.url)
-                    self.driver.implicitly_wait(2)
-                    self.datas = self.parsing_method()
-                else:
-                    self.driver.get(self.url)
-                    self.driver.implicitly_wait(2)
-                    self.datas = self.parse_array(self.x_path, self.index1, self.index2)
-            except WebDriverException:
-                print("Problème avec le WebDriver, vérifiez la connection.")
+        # TODO : il faudra peut-être effacer le fichier chromedriver lors d'une mise à jour pour éviter les conflits
+        # TODO : on pourrait commencer par la vérification du  numéro de version avant de lancer le webdriver
+        try:
+            with Chrome(executable_path="chromedriver.exe", options=self.options) as self.driver:
+                try:
+                    if self.loop == "loop":
+                        self.driver.get(self.url)
+                        self.driver.implicitly_wait(2)
+                        self.datas = self.parsing_method()
+                    else:
+                        self.driver.get(self.url)
+                        self.driver.implicitly_wait(2)
+                        self.datas = self.parse_array(self.x_path, self.index1, self.index2)
+                except WebDriverException:
+                    print("Problème avec le WebDriver, vérifiez la connection.")
+        except SessionNotCreatedException:
+            driver_update()
+            with Chrome(executable_path=r"C:\Users\bin\chromedriver.exe", options=self.options) as self.driver:
+                try:
+                    if self.loop == "loop":
+                        self.driver.get(self.url)
+                        self.driver.implicitly_wait(2)
+                        self.datas = self.parsing_method()
+                    else:
+                        self.driver.get(self.url)
+                        self.driver.implicitly_wait(2)
+                        self.datas = self.parse_array(self.x_path, self.index1, self.index2)
+                except WebDriverException:
+                    print("Problème avec le WebDriver, vérifiez la connection.")
 
     def parsing_method(self):
         """ fonction qui détermine le nombre de lignes à scraper et la boucle utilisée """
