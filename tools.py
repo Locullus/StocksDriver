@@ -147,6 +147,12 @@ def driver_update():
     # on enregistre localement l'archive zippée
     save_datas('chromedriver.zip', response)
 
+    # on supprime la version obsolète de 'chromedriver.exe' pour éviter les conflits de namespace
+    if os.path.isfile('chromedriver.exe'):
+        os.remove('chromedriver.exe')
+    else:
+        print("impossible d'effacer le fichier 'chromedriver.exe : fichier introuvable")
+
     # on extrait le fichier chromedriver de l'archive zippée dans le répertoire courant
     with ZipFile('chromedriver.zip', 'r') as zipped_file:
         zipped_file.extract('chromedriver.exe')
