@@ -2,6 +2,7 @@
 ici sont rassemblées toutes les fonctions utilitaires
 """
 
+import os
 import re
 import requests
 from requests_html import HTMLSession
@@ -94,6 +95,7 @@ def driver_update():
     """fonction qui met à jour le chromedriver en lien avec la version du navigateur"""
 
     # on vérifie le numéro de version de chrome
+    # TODO : la question est de savoir si le webdriver se lancera lorsque l'exception sera levée...
     options = Options()
     options.headless = True
     with Chrome(executable_path="chromedriver.exe", options=options) as driver:
@@ -148,3 +150,9 @@ def driver_update():
     # on extrait le fichier chromedriver de l'archive zippée dans le répertoire courant
     with ZipFile('chromedriver.zip', 'r') as zipped_file:
         zipped_file.extract('chromedriver.exe')
+
+    # on supprime l'archive après l'extraction du chromedriver
+    if os.path.isfile('chromedriver.zip'):
+        os.remove('chromedriver.zip')
+    else:
+        print("impossible d'effacer le fichier 'chromedriver.zip : ce fichier n'existe pas")
