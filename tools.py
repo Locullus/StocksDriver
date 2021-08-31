@@ -139,7 +139,7 @@ def driver_update():
     url = list(url)[0]
     print(
         f"l'url de téléchargement est {url}"
-    )  # https://chromedriver.storage.googleapis.com/93.0.4577.15/chromedriver_win32.zip
+    )  # https://chromedriver.storage.googleapis.com/92.0.4515.107/chromedriver_win32.zip
 
     # on fait une requête vers le fichier distant
     response = session.get(url)
