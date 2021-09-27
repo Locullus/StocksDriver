@@ -95,10 +95,10 @@ def driver_update():
     """fonction qui met à jour le chromedriver en lien avec la version du navigateur"""
 
     # on vérifie le numéro de version de chrome
-    # TODO : la question est de savoir si le webdriver se lancera lorsque l'exception sera levée...
+    # TODO : trouver la raison qui interdit l'installation du fichier dezippé dans le répertoire courant. Pb de droits
     options = Options()
     options.headless = True
-    with Chrome(executable_path="chromedriver.exe", options=options) as driver:
+    with Chrome(executable_path="C:/Users/bin/chromedriver.exe", options=options) as driver:
         if 'browserVersion' in driver.capabilities:
             version = driver.capabilities['browserVersion'].split(".")[0]
             print(f"le numéro de version de chrome est {version}")  # 92
