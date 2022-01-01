@@ -19,7 +19,7 @@
     soit parce que le plus haut local a été dépassé par l'indice.
 
     Ici nous avons le programme principal (__main__)
-    """
+"""
 
 # ------ importation des modules ------
 from datetime import date
@@ -196,6 +196,7 @@ print(f"La date d'expiration à 90 jours nous donne le {expiration}")
 lvc_quantity = round(750 / A1)
 if position_length == 0:
     position_A1 = Position("A1", string_date, "+", lvc_quantity, "lvc", A1, PX_A1, expiration)
+    # TODO : vérifier que le fichier positions existe avant d'y ajouter quoique ce soit (exception levée au clonage)
     positions.append(position_A1)
 else:
     position_A1 = positions[0]
